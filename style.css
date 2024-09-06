@@ -1,0 +1,76 @@
+#listScreen {
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    background: var(--backlayer);
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#ltitle {
+    font-family: 'Azaret Mono', monospace;
+    font-size: 4em;
+    text-align: left;
+    color: var(--font);
+    margin: 0;
+}
+
+#searchv {
+    height: 2em;
+    -webkit-appearance: none;
+    max-width: 40vw;
+    font-family: 'Raleway', sans-serif;
+    text-align: center;
+    padding: 4px;
+    transition: 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    background: none;
+}
+
+#searchv:focus {
+    outline: none;
+    border-bottom: 2px solid var(--accent1);
+}
+
+#header {
+    padding: 0;
+    margin: 2.6vw 0 3vw 0;
+    width: calc(100% - 10vw);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#songlist {
+    /*background: var(--dev1);*/
+    height: calc(100% - 10vw);
+    width: calc(100% - 10vw);
+    margin: 0 5vw 5vw 5vw;
+    overflow: scroll;
+}
+
+.songnode {
+    padding: 1em;
+    border-left: 1px solid var(--accent1);
+    border-top: 1px solid var(--accent1);
+    border-radius: 10px 0 0 0;
+    margin-bottom: 1em;
+}
+
+.song-title {
+    font-size: 1.6em;
+    margin: 0 0 0.1em 0;
+    font-family: 'Raleway', sans-serif;
+}
+
+.song-author {
+    font-size: 1em;
+    margin: 0;
+    font-family: 'Raleway', sans-serif;
+}
