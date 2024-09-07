@@ -1,3 +1,13 @@
+p {
+    font-size: 1.5em;
+}
+
+h4 {
+    font-size: 1.8em;
+}
+
+/*TODO FOR ZOOM: Change .microblock height, .spacebehind margin-right*/
+
 #listScreen {
     position: absolute;
     height: 100vh;
@@ -69,6 +79,7 @@
     appearance: none;
     border: none;
     text-align: left;
+    width: 100%;
 }
 
 .song-title {
@@ -93,8 +104,10 @@
     overflow-y: scroll;
     overflow-x: hidden;
     transition: 0.6s;
-    display: flex;
-    justify-content: center;
+    /*display: flex;
+    justify-content: center;*/
+    display: block;
+    padding-left: 5vw;
 }
 
 #scrollingchords {
@@ -103,6 +116,10 @@
     flex-direction: column;
     align-items: center;
     background: var(--backlayer);
+}
+
+#sbody {
+    max-width: inherit;
 }
 
 #shead {
@@ -115,7 +132,7 @@
     font-family: 'Azaret Mono', monospace;
     font-size: 2.5em;
     color: var(--font);
-    margin: 5vw 0 0 0;
+    margin: 1.5em 0 0 0;
 }
 
 #sauth {
@@ -127,7 +144,6 @@
 
 .ptitle {
     font-family: 'Azaret Mono', monospace;
-    font-size: 1.8em;
     color: var(--font);
     margin: 0;
 }
@@ -136,25 +152,32 @@
     margin: 4vw 0;
     display: flex;
     flex-direction: column;
+    width: inherit;
 }
 
 .pline {
+    width: inherit;
     margin-top: 0.8em;
     display: flex;
+    flex-wrap: wrap;
     flex-direction: row;
-    font-size: 1.5em;
 }
 
 .microblock {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    margin-left: 4px;
+    /*margin-left: 6px;*/
     font-family: 'Raleway', sans-serif;
+    height: 4em;
+}
+
+.spacebehind {
+    margin-right: 6px;
 }
 
 .chord {
-    font-family: 'Azaret Mono', monospace;
+    font-family: 'Azeret Mono', monospace;
     margin: 0 10px 0 0;
     color: var(--accent1);
 }
@@ -162,4 +185,17 @@
 .microtext {
     margin: 0;
     color: var(--font);
+}
+
+#backtolistbut {
+    position: fixed;
+    margin-top: 1em;
+    margin-left: calc(1em - 5vw);
+    width: 2.5em;
+    height: 2.5em;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    font-family: "Azeret Mono", monospace;
+    scroll-behavior: unset;
 }

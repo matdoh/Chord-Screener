@@ -96,20 +96,36 @@ function search() {
 }
 
 function open_song(data) {
-    document.getElementById('listScreen').style.left = '-100vw';
-    document.getElementById('chordScreen').style.left = '0';
     document.getElementById('sauth').appendChild(document.createTextNode(data.author));
     document.getElementById('stitle').appendChild(document.createTextNode(data.name));
     generate_body(data.content);
+
+    document.getElementById('listScreen').style.left = '-100vw';
+    document.getElementById('chordScreen').style.left = '0';
+}
+
+async function back_to_list() {
+    document.getElementById('listScreen').style.left = '0';
+    document.getElementById('chordScreen').style.left = '100vw';
+
+    await sleep(1000);
+
+    document.getElementById('sauth').innerHTML = '';
+    document.getElementById('stitle').innerHTML = '';
+    const body = document.getElementById('sbody');
+    if(body !== null) {body.remove();}
 }
 
 function generate_body(content) {
     //console.log(typeof content);
     const body = document.createElement('div');
-    body.className = "sbody";
+    body.id = "sbody";
     const see_data = document.createTextNode(content);
 
     let parts = partseperator(content);
+
+    console.log(parts);
+
     for(let i = 0; i < parts.length; i+=2) {
         const ppart = document.createElement('div');
         ppart.className = 'ppart';
@@ -126,14 +142,19 @@ function generate_body(content) {
                 return;
             }
 
-            //console.log(struc_array);
+            console.log(struc_array);
 
             const p = document.createElement('div');
             p.className = 'pline';
             for(let ii = 0; ii < struc_array.length; ii+=2) {
                 if(ii === 0 && struc_array[0] === '') {continue;}
                 const block = document.createElement('div');
-                block.className = "microblock";
+                /*TODO: Check for space at the end of even el*/
+                if (struc_array[ii].charAt(struc_array[ii].length - 1) === ' ') {
+                    block.className = "microblock spacebehind";
+                } else {
+                    block.className = "microblock";
+                }
                 const chord = document.createElement("p");
                 chord.className = "chord";
                 if(ii === 0) {chord.appendChild(document.createTextNode(''));}
@@ -157,12 +178,25 @@ function generate_body(content) {
 function partseperator(content, startv='{c: ', endv ='}') {
     backarr = [];
     f_ed_arr = content.split(startv);
+    /*if(f_ed_arr[0] === content) {
+        backarr.push('');
+        backarr.push(f_ed_arr[0]);
+        return backarr;
+    }*/
     f_ed_arr.forEach(function(e) {
         let secttitle = e.split(endv)[0];
-        backarr.push(secttitle);
         let search = secttitle + endv;
-        let seccon = e.replace(search, "")
+        let seccon = e.replace(search, "");
+        if(secttitle === seccon) {
+            backarr.push('');
+        } else {
+            backarr.push(secttitle);
+        }
         backarr.push(seccon);
     });
     return backarr;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
