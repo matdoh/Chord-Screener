@@ -3,12 +3,9 @@
 $methode = $_SERVER['REQUEST_METHOD'];
 $req = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 $wanted = NULL;
-if(!empty($req[0])) {
-    if(strtolower($req[0]) == 'sb') {
-        if(!empty($_GET['song'])) {$wanted = $_GET['song'];}
-        else {$wanted = "list";}
-    }
-}
+if(!empty($_GET['song'])) {$wanted = $_GET['song'];}
+else {$wanted = "list";}
+
 $data = json_decode(substr(file_get_contents('files/dataFile.txt'), 3));
 
 switch ($methode) {
@@ -21,7 +18,9 @@ switch ($methode) {
                 $returnarray = array();
 
                 foreach($me as $m) {
-                    $returnarray[] = [$m->name, $m->author, $m->DeepSearch];
+                    if($m->Deleted == false) {
+                        $returnarray[] = [$m->name, $m->author, $m->DeepSearch];
+                    }
                 }
 
                 echo json_encode($returnarray);

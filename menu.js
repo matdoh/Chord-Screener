@@ -10,25 +10,29 @@ search();
 //Funcs
 function grab(song = '') {
     // Define the API URL
-    let apiUrl = 'API/index.php/sb';
+    let apiUrl = 'API/songbook.php';
     if(song !== '') {apiUrl += '/?song=' + song}
 
     // Make a GET request
     fetch(apiUrl)
         .then(response => {
-            console.log(response);
+            //console.log(response);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             return response.json();
         })
         .then(data => {
-            data.sort();
-            console.log(data[0]); // Log the data to the console
-            // Display the data on a web page
-            data.forEach(function(song){
-                songlist.appendChild(create_songnode(song));
-            });
+            if(song === '') {
+                data.sort();
+                data.forEach(function(song){
+                    songlist.appendChild(create_songnode(song));
+                });
+            } else {
+                //console.log('wow, just wow ' + data.author);
+                open_song(data);
+            }
+            //console.log(data);
         })
         .catch(error => {
             console.error('Error:', error);
@@ -39,7 +43,9 @@ function create_songnode(song) {
     const songnode = document.createElement("div");
     songnode.className = "songnode";
     songnode.setAttribute("data-search", song[2]);
-    const link = document.createElement("a");
+    const link = document.createElement("button");
+    link.className = "listbutton"
+    link.setAttribute('onclick', `grab(\'${song[0]}\')`);
     songnode.appendChild(link);
     const songtitle = document.createElement("h5");
     songtitle.className = "song-title";
@@ -78,7 +84,7 @@ function search() {
     //implementing search behavior
     var current_text = document.getElementById('searchv').value.toLowerCase()
         .replaceAll('ü', 'u').replaceAll('ä', 'a').replaceAll('ö', 'o').replaceAll('ß', 's');
-    console.log(songlist.childNodes);
+    //console.log(songlist.childNodes);
     songlist.childNodes.forEach(function(listNode){
         if(listNode.toString() !== '[object Text]') {
             if(listNode.getAttribute("data-search").includes(current_text)) {
@@ -87,4 +93,76 @@ function search() {
                 listNode.style.display = "none";
             }}
     });
+}
+
+function open_song(data) {
+    document.getElementById('listScreen').style.left = '-100vw';
+    document.getElementById('chordScreen').style.left = '0';
+    document.getElementById('sauth').appendChild(document.createTextNode(data.author));
+    document.getElementById('stitle').appendChild(document.createTextNode(data.name));
+    generate_body(data.content);
+}
+
+function generate_body(content) {
+    //console.log(typeof content);
+    const body = document.createElement('div');
+    body.className = "sbody";
+    const see_data = document.createTextNode(content);
+
+    let parts = partseperator(content);
+    for(let i = 0; i < parts.length; i+=2) {
+        const ppart = document.createElement('div');
+        ppart.className = 'ppart';
+        const ptitle = document.createElement('h4');
+        ptitle.className = 'ptitle';
+        ptitle.appendChild(document.createTextNode(parts[i]));
+        ppart.appendChild(ptitle);
+
+        let lines = parts[i+1].split('\n');
+        lines.forEach(function (line) { //linebuilder
+            struc_array = partseperator(line, "[", "]");
+            struc_array.shift();
+            if(struc_array.length === 1) {
+                return;
+            }
+
+            //console.log(struc_array);
+
+            const p = document.createElement('div');
+            p.className = 'pline';
+            for(let ii = 0; ii < struc_array.length; ii+=2) {
+                if(ii === 0 && struc_array[0] === '') {continue;}
+                const block = document.createElement('div');
+                block.className = "microblock";
+                const chord = document.createElement("p");
+                chord.className = "chord";
+                if(ii === 0) {chord.appendChild(document.createTextNode(''));}
+                else {chord.appendChild(document.createTextNode(struc_array[ii-1]));}
+                block.appendChild(chord);
+                const text = document.createElement("p");
+                text.className = "microtext";
+                text.appendChild(document.createTextNode(struc_array[ii]));
+                block.appendChild(text);
+                p.appendChild(block);
+            }
+            ppart.appendChild(p);
+        });
+
+        body.appendChild(ppart);
+    }
+
+    document.getElementById('scrollingchords').appendChild(body);
+}
+
+function partseperator(content, startv='{c: ', endv ='}') {
+    backarr = [];
+    f_ed_arr = content.split(startv);
+    f_ed_arr.forEach(function(e) {
+        let secttitle = e.split(endv)[0];
+        backarr.push(secttitle);
+        let search = secttitle + endv;
+        let seccon = e.replace(search, "")
+        backarr.push(seccon);
+    });
+    return backarr;
 }
