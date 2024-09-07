@@ -161,7 +161,11 @@ function generate_body(content) {
                 else {chord.appendChild(document.createTextNode(struc_array[ii-1]));}
                 block.appendChild(chord);
                 const text = document.createElement("p");
-                text.className = "microtext";
+                if(struc_array[ii].charAt(0) === ' ') {
+                    text.className = "microtext spacebefore";
+                } else {
+                    text.className = "microtext";
+                }
                 text.appendChild(document.createTextNode(struc_array[ii]));
                 block.appendChild(text);
                 p.appendChild(block);
