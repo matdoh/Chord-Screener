@@ -1,6 +1,7 @@
 //Global Vars
 const dynamicsearch = document.getElementById('searchv')
 const songlist = document.getElementById('songlist');
+var scale = 1.0;
 
 //Initialize Site
 grab();
@@ -100,6 +101,7 @@ function open_song(data) {
     document.getElementById('sauth').appendChild(document.createTextNode(data.author));
     document.getElementById('stitle').appendChild(document.createTextNode(data.name));
     generate_body(data.content);
+    zoom(0);
 
     document.getElementById('listScreen').style.left = '-100vw';
     document.getElementById('chordScreen').style.left = '0';
@@ -204,4 +206,31 @@ function partseperator(content, startv='{c: ', endv ='}') {
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function zoom(factor) {
+    scale += factor;
+
+    /*TODO FOR ZOOM: Change
+       p font-size,
+       h4 font-size,
+       .microblock height,
+       .spacebehind margin-right
+       .spacebefore padding-left*/
+
+    document.querySelectorAll('p').forEach(parag => {
+        parag.style.fontSize = `${scale * 1.5}em`;
+    });
+    document.querySelectorAll('h4').forEach(parag => {
+        parag.style.fontSize = `${scale * 1.8}em`;
+    });
+    document.querySelectorAll('.microblock').forEach(parag => {
+        parag.style.height = `${scale * 4}em`;
+    });
+    document.querySelectorAll('.spacebehind').forEach(parag => {
+        parag.style.marginRight = `${scale * 6}px`;
+    });
+    document.querySelectorAll('.spacebefore').forEach(parag => {
+        parag.style.paddingLeft = `${scale * 6}px`;
+    });
 }

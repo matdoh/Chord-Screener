@@ -10,8 +10,6 @@ button {
     background: rgba(0,0,0,0);
 }
 
-/*TODO FOR ZOOM: Change .microblock height, .spacebehind margin-right*/
-
 #listScreen {
     position: absolute;
     height: 100vh;
@@ -113,11 +111,11 @@ button {
     /*display: flex;
     justify-content: center;*/
     display: block;
-    padding-left: 5vw;
 }
 
 #scrollingchords {
     width: 90vw;
+    margin-left: 5vw;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -198,16 +196,26 @@ button {
 }
 
 #backtolistbut {
+    margin-left: 1.5em /* 1*1.5em + 0*4em */
+}
+
+#zoominbut {
+    margin-left: 7em; /* 2*1.5em + 1*4em */
+}
+
+#zoomoutbut {
+    margin-left: 12.5em; /* 3*1.5em + 2*4em */
+}
+
+.chordbutton {
     position: fixed;
     margin-top: 1.5em;
-    margin-left: calc(1.5em - 5vw);
     width: 4em;
     height: 4em;
     border-radius: 50%;
     border: none;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     font-family: "Azeret Mono", monospace;
-    scroll-behavior: unset;
     color: var(--accent1);
     text-align: center;
     background: var(--backlayertrans);
