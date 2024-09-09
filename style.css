@@ -6,6 +6,10 @@ h4 {
     font-size: 1.8em;
 }
 
+button {
+    background: rgba(0,0,0,0);
+}
+
 /*TODO FOR ZOOM: Change .microblock height, .spacebehind margin-right*/
 
 #listScreen {
@@ -40,6 +44,7 @@ h4 {
     transition: 0.15s;
     -webkit-appearance: none;
     appearance: none;
+    border-radius: 0;
     border: none;
     background: none;
 }
@@ -80,6 +85,7 @@ h4 {
     border: none;
     text-align: left;
     width: 100%;
+    color: var(--font);
 }
 
 .song-title {
@@ -132,7 +138,7 @@ h4 {
     font-family: 'Azaret Mono', monospace;
     font-size: 2.5em;
     color: var(--font);
-    margin: 1.5em 0 0 0;
+    margin: 2.2em 0 0 0;
 }
 
 #sauth {
@@ -193,13 +199,16 @@ h4 {
 
 #backtolistbut {
     position: fixed;
-    margin-top: 1em;
-    margin-left: calc(1em - 5vw);
-    width: 2.5em;
-    height: 2.5em;
+    margin-top: 1.5em;
+    margin-left: calc(1.5em - 5vw);
+    width: 4em;
+    height: 4em;
     border-radius: 50%;
     border: none;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     font-family: "Azeret Mono", monospace;
     scroll-behavior: unset;
+    color: var(--accent1);
+    text-align: center;
+    background: var(--backlayertrans);
 }

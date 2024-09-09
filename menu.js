@@ -96,6 +96,7 @@ function search() {
 }
 
 function open_song(data) {
+    //console.log(data);
     document.getElementById('sauth').appendChild(document.createTextNode(data.author));
     document.getElementById('stitle').appendChild(document.createTextNode(data.name));
     generate_body(data.content);
