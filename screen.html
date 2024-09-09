@@ -24,10 +24,16 @@
         <button id="backtolistbut" class="chordbutton" onclick="back_to_list()"><=</button>
         <button id="zoominbut" class="chordbutton" onclick="zoom(0.1)">A+</button>
         <button id="zoomoutbut" class="chordbutton" onclick="zoom(-0.1)">A-</button>
+        <button id="transupbut" class="chordbutton" onclick="transpose(1)">T+</button>
+        <button id="transdownbut" class="chordbutton" onclick="transpose(11)">T-</button>
+        <button id="capoupbut" class="chordbutton" onclick="transpose(11, true)">C+</button>
+        <button id="capodownbut" class="chordbutton" onclick="transpose(1, true)">C-</button>
         <div id="scrollingchords">
             <div id="shead">
                 <h2 id="stitle"></h2>
                 <h3 id="sauth"></h3>
+                <h3 id="skey">Tonart: </h3>
+                <h3 id="scapo">Capo:&nbsp;&nbsp;&nbsp;0</h3>
             </div>
         </div>
     </div>

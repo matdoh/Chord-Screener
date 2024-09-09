@@ -1,7 +1,25 @@
 //Global Vars
 const dynamicsearch = document.getElementById('searchv')
 const songlist = document.getElementById('songlist');
+const Kreuzkey = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
+const bKey = ["A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab"];
+const keyDict = [
+    ["A", Kreuzkey],
+    ["Bb", bKey],
+    ["B", Kreuzkey],
+    ["C", Kreuzkey],
+    ["Db", bKey],
+    ["D", Kreuzkey],
+    ["Eb", bKey],
+    ["E", Kreuzkey],
+    ["F#", Kreuzkey],
+    ["Gb", bKey],
+    ["G", Kreuzkey],
+    ["Ab", bKey]];
 var scale = 1.0;
+var displayedKey = null;
+var actualKey = null;
+var capopos = 0;
 
 //Initialize Site
 grab();
@@ -97,10 +115,15 @@ function search() {
 }
 
 function open_song(data) {
-    //console.log(data);
+    displayedKey = data.key % 12;
+    actualKey = data.key % 12;
+    capopos = 0;
+    console.log("Song: " + data.name + ", Key: " + data.key + ", Capo: " + data.Capo);
     document.getElementById('sauth').appendChild(document.createTextNode(data.author));
     document.getElementById('stitle').appendChild(document.createTextNode(data.name));
     generate_body(data.content);
+    transpose(data.KeyShift);
+    if(data.Capo !== 0) {transpose(12-(data.Capo % 12), true);}
     zoom(0);
 
     document.getElementById('listScreen').style.left = '-100vw';
@@ -123,11 +146,10 @@ function generate_body(content) {
     //console.log(typeof content);
     const body = document.createElement('div');
     body.id = "sbody";
-    const see_data = document.createTextNode(content);
 
     let parts = partseperator(content);
 
-    console.log(parts);
+    //console.log(parts);
 
     for(let i = 0; i < parts.length; i+=2) {
         const ppart = document.createElement('div');
@@ -145,7 +167,7 @@ function generate_body(content) {
                 return;
             }
 
-            console.log(struc_array);
+            //console.log(struc_array);
 
             const p = document.createElement('div');
             p.className = 'pline';
@@ -176,7 +198,9 @@ function generate_body(content) {
             ppart.appendChild(p);
         });
 
-        body.appendChild(ppart);
+        if(!(ppart.childNodes.length === 1 && ppart.firstChild.textContent === "")) {
+            body.appendChild(ppart);
+        }
     }
 
     document.getElementById('scrollingchords').appendChild(body);
@@ -234,3 +258,53 @@ function zoom(factor) {
         parag.style.paddingLeft = `${scale * 6}px`;
     });
 }
+
+function transpose(keyShift, capotune = false) {
+    let oldKeys = keyDict[displayedKey][1];
+    displayedKey = (displayedKey + keyShift) % 12;
+    if(!capotune) {actualKey = (actualKey + keyShift) % 12;}
+    let newKeys = keyDict[displayedKey][1];
+
+    document.getElementById('skey').textContent = 'Tonart: ' + keyDict[actualKey][0]/* + ` (${actualKey})`*/;
+    if(capotune) {
+        capopos = (capopos + (12 - keyShift)) % 12;
+        document.getElementById('scapo').textContent = 'Capo:   ' + capopos;
+    }
+
+    //console.log('OldKeys: ' + oldKeys + ", NewKeys: " + newKeys);
+
+    if(keyShift === 0) {return;}
+
+    document.querySelectorAll('.chord').forEach(e => {
+        let partial_e = e.textContent.split('/');
+        let new_chord = "";
+        if(oldKeys === Kreuzkey) {
+            partial_e.forEach(c => {
+                let i = 11;
+                while (i >= 0) {
+                    let new_exp = c.replaceAll(oldKeys[i], newKeys[(i + keyShift) % 12]);
+                    if(new_exp !== c) {
+                        new_chord += "/" + new_exp;
+                        return;
+                    }
+                    i = i - 1;
+                }
+            });
+        } else {
+            partial_e.forEach(c => {
+                let i = 1;
+                while (i<=12) {
+                    let new_exp = c.replaceAll(oldKeys[i%12], newKeys[(i + keyShift) % 12]);
+                    if(new_exp !== c) {
+                        new_chord += "/" + new_exp;
+                        return;
+                    }
+                    i++;
+                }
+            });
+        }
+        new_chord = new_chord.replace("/", "");
+        e.textContent = new_chord;
+    });
+}
+
