@@ -186,7 +186,6 @@ button {
     flex-direction: column;
     justify-content: space-between;
     /*margin-left: 6px;*/
-    font-family: 'Raleway', sans-serif;
     height: 4em;
 }
 
@@ -207,6 +206,7 @@ button {
 .microtext {
     margin: 0;
     color: var(--font);
+    font-family: 'Raleway', sans-serif;
 }
 
 #backtolistbut {
@@ -235,6 +235,10 @@ button {
 
 #capodownbut {
     margin-left: 34.5em;
+}
+
+#textmodebut {
+    margin-left: 40em;
 }
 
 .chordbutton {

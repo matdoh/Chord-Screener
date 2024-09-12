@@ -20,6 +20,8 @@ var scale = 1.0;
 var displayedKey = null;
 var actualKey = null;
 var capopos = 0;
+var textmode = -1;
+var currentData;
 
 //Initialize Site
 grab();
@@ -49,7 +51,8 @@ function grab(song = '') {
                 });
             } else {
                 //console.log('wow, just wow ' + data.author);
-                open_song(data);
+                currentData = data;
+                open_song();
             }
             //console.log(data);
         })
@@ -114,16 +117,16 @@ function search() {
     });
 }
 
-function open_song(data) {
-    displayedKey = data.key % 12;
-    actualKey = data.key % 12;
+function open_song() {
+    displayedKey = currentData.key % 12;
+    actualKey = currentData.key % 12;
     capopos = 0;
-    console.log("Song: " + data.name + ", Key: " + data.key + ", Capo: " + data.Capo);
-    document.getElementById('sauth').appendChild(document.createTextNode(data.author));
-    document.getElementById('stitle').appendChild(document.createTextNode(data.name));
-    generate_body(data.content);
-    transpose(data.KeyShift);
-    if(data.Capo !== 0) {transpose(12-(data.Capo % 12), true);}
+    //console.log("Song: " + data.name + ", Key: " + data.key + ", Capo: " + data.Capo);
+    document.getElementById('sauth').appendChild(document.createTextNode(currentData.author));
+    document.getElementById('stitle').appendChild(document.createTextNode(currentData.name));
+    generate_body(currentData.content);
+    transpose(currentData.KeyShift);
+    if(currentData.Capo !== 0) {transpose(12-(currentData.Capo % 12), true);}
     zoom(0);
 
     document.getElementById('listScreen').style.left = '-100vw';
@@ -143,7 +146,7 @@ async function back_to_list() {
 }
 
 function generate_body(content) {
-    //console.log(typeof content);
+    //console.log(content);
     const body = document.createElement('div');
     body.id = "sbody";
 
@@ -160,14 +163,50 @@ function generate_body(content) {
         ppart.appendChild(ptitle);
 
         let lines = parts[i+1].split('\n');
+
+        console.log('here');
+
+        let tmkillsinsts = false;
+        if(textmode === 1) {
+            for(let ii = 0; ii < lines.length; ii++) {
+                let mini_array = partseperator(lines[ii], "[", "]");
+                mini_array.shift();
+                if(mini_array.length === 1 && mini_array[0] === '') {
+                    continue;
+                }
+                let linestr = "";
+                for(let iii = 0; iii < mini_array.length; iii+=2) {
+                    linestr += mini_array[iii];
+                }
+                if(linestr !== '') {tmkillsinsts = true;}
+                lines[ii] = linestr;
+            }
+        }
+
+        console.log(lines);
+
+        if(parts[i+1].replace('[', '') === parts[i+1] || textmode === 1) {
+            for(let ii = 0; ii < lines.length; ii++) {
+                const pline = document.createElement('div');
+                pline.className = "pline";
+                const plinet = document.createElement('p');
+                plinet.className = 'microtext';
+                plinet.textContent = lines[ii];
+                pline.appendChild(plinet);
+                if(tmkillsinsts) {ppart.appendChild(pline);}
+            }
+            body.appendChild(ppart);
+            continue;
+        }
+
         lines.forEach(function (line) { //linebuilder
-            struc_array = partseperator(line, "[", "]");
+            let struc_array = partseperator(line, "[", "]");
             struc_array.shift();
-            if(struc_array.length === 1) {
+            if(struc_array.length === 1 && struc_array[0] === '') {
                 return;
             }
 
-            //console.log(struc_array);
+            console.log(struc_array);
 
             const p = document.createElement('div');
             p.className = 'pline';
@@ -308,3 +347,12 @@ function transpose(keyShift, capotune = false) {
     });
 }
 
+function flip_textmode() {
+    document.getElementById('sauth').innerHTML = '';
+    document.getElementById('stitle').innerHTML = '';
+    const body = document.getElementById('sbody');
+    if(body !== null) {body.remove();}
+
+    textmode *= -1;
+    open_song();
+}
