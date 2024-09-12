@@ -166,7 +166,7 @@ function generate_body(content) {
 
         let lines = parts[i+1].split('\n');
 
-        console.log('here');
+        //console.log('here');
 
         let tmkillsinsts = false;
         if(textmode === 1) {
@@ -193,21 +193,23 @@ function generate_body(content) {
 
         var hasnochords = parts[i+1].replace('[', '') === parts[i+1];
         var hasnotabs = parts[i+1].replace('{sot}', '') === parts[i+1];
+        var tablines = false;
         if(hasnochords && hasnotabs || textmode === 1) {
             for(let ii = 0; ii < lines.length; ii++) {
+                if(lines[ii] === "{sot}") {tablines = true;}
+                else if(lines[ii] === "{eot}") {tablines = false; continue;}
                 const pline = document.createElement('div');
                 pline.className = "pline";
                 const plinet = document.createElement('p');
                 plinet.className = 'microtext';
                 plinet.textContent = lines[ii];
+                console.log(lines[ii]);
                 pline.appendChild(plinet);
-                if(tmkillsinsts) {ppart.appendChild(pline);}
+                if(tmkillsinsts && !tablines && lines[ii]) {ppart.appendChild(pline);}
             }
             body.appendChild(ppart);
             continue;
         }
-
-        var tablines = false;
 
         lines.forEach(function (line) { //linebuilder
             if(!hasnotabs) {
@@ -253,7 +255,7 @@ function generate_body(content) {
                 return;
             }
 
-            console.log(struc_array);
+            //console.log(struc_array);
 
             const p = document.createElement('div');
             p.className = 'pline';
