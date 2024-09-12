@@ -191,7 +191,9 @@ function generate_body(content) {
 
         console.log(lines);
 
-        if(parts[i+1].replace('[', '') === parts[i+1] || textmode === 1) {
+        var hasnochords = parts[i+1].replace('[', '') === parts[i+1];
+        var hasnotabs = parts[i+1].replace('{sot}', '') === parts[i+1];
+        if(hasnochords && hasnotabs || textmode === 1) {
             for(let ii = 0; ii < lines.length; ii++) {
                 const pline = document.createElement('div');
                 pline.className = "pline";
@@ -205,7 +207,35 @@ function generate_body(content) {
             continue;
         }
 
+        var tablines = false;
+
         lines.forEach(function (line) { //linebuilder
+            if(!hasnotabs) {
+                if (line === "{sot}") {
+                    tablines = true;
+                    const emline = document.createElement('div');
+                    emline.className = "tline emline";
+                    ppart.appendChild(emline);
+                    return;
+                } else if (line === "{eot}") {
+                    const emline = document.createElement('div');
+                    emline.className = "tline emline";
+                    ppart.appendChild(emline);
+                    tablines = false;
+                    return;
+                }
+                if (tablines) {
+                    const tline = document.createElement('div');
+                    tline.className = "tline";
+                    const tlinet = document.createElement('p');
+                    tlinet.className = 'tab';
+                    tlinet.textContent = line/*.substring(1, line.length - 1)*/;
+                    tline.appendChild(tlinet);
+                    ppart.appendChild(tline);
+                    return;
+                }
+            }
+
             if(line.charAt(0) === '(' && line.charAt(line.length - 1) === ')') {
                 const pline = document.createElement('div');
                 pline.className = "pline";
@@ -313,6 +343,9 @@ function zoom(factor) {
     document.querySelectorAll('.spacebefore').forEach(parag => {
         parag.style.paddingLeft = `${scale * 6}px`;
     });
+    document.querySelectorAll('.tab').forEach(parag => {
+        parag.style.fontSize = `${scale * 1.1}em`;
+    })
 }
 
 function transpose(keyShift, capotune = false) {

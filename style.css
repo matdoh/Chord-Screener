@@ -25,7 +25,8 @@ button {
 }
 
 #ltitle {
-    font-family: 'Azaret Mono', monospace;
+    font-family: 'Azeret Mono', monospace;
+    font-weight: 600;
     font-size: 4em;
     text-align: left;
     color: var(--font);
@@ -199,6 +200,7 @@ button {
 
 .chord {
     font-family: 'Azeret Mono', monospace;
+    font-weight: 600;
     margin: 0 10px 0 0;
     color: var(--accent1);
 }
@@ -250,6 +252,7 @@ button {
     border: none;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     font-family: "Azeret Mono", monospace;
+    font-weight: 600;
     color: var(--accent1);
     text-align: center;
     background: var(--backlayertrans);
@@ -258,4 +261,14 @@ button {
 .comment {
     font-style: italic;
     color: var(--accent2);
+}
+
+.tab {
+    font-family: 'Azeret Mono', monospace;
+    font-weight: 250;
+    margin: 0;
+}
+
+.emline {
+    height: 0.8em;
 }
