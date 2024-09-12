@@ -37,11 +37,13 @@ function grab(song = '') {
     // Make a GET request
     fetch(apiUrl)
         .then(response => {
-            //console.log(response);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            return response.json();
+            let res;
+            res = response.json();
+            console.log(res);
+            return res;
         })
         .then(data => {
             if(song === '') {
@@ -50,7 +52,7 @@ function grab(song = '') {
                     songlist.appendChild(create_songnode(song));
                 });
             } else {
-                //console.log('wow, just wow ' + data.author);
+                console.log(data);
                 currentData = data;
                 open_song();
             }
@@ -169,6 +171,10 @@ function generate_body(content) {
         let tmkillsinsts = false;
         if(textmode === 1) {
             for(let ii = 0; ii < lines.length; ii++) {
+                if(lines[ii].charAt(0) === '(' && lines[ii].charAt(lines[ii].length - 1) === ')') {
+                    lines[ii] = "";
+                    continue;
+                }
                 let mini_array = partseperator(lines[ii], "[", "]");
                 mini_array.shift();
                 if(mini_array.length === 1 && mini_array[0] === '') {
@@ -200,6 +206,17 @@ function generate_body(content) {
         }
 
         lines.forEach(function (line) { //linebuilder
+            if(line.charAt(0) === '(' && line.charAt(line.length - 1) === ')') {
+                const pline = document.createElement('div');
+                pline.className = "pline";
+                const plinet = document.createElement('p');
+                plinet.className = 'microtext comment';
+                plinet.textContent = line.substring(1, line.length - 1);
+                pline.appendChild(plinet);
+                ppart.appendChild(pline);
+                return;
+            }
+
             let struc_array = partseperator(line, "[", "]");
             struc_array.shift();
             if(struc_array.length === 1 && struc_array[0] === '') {
@@ -307,7 +324,7 @@ function transpose(keyShift, capotune = false) {
     document.getElementById('skey').textContent = 'Tonart: ' + keyDict[actualKey][0]/* + ` (${actualKey})`*/;
     if(capotune) {
         capopos = (capopos + (12 - keyShift)) % 12;
-        document.getElementById('scapo').textContent = 'Capo:   ' + capopos;
+        document.getElementById('scapo').innerHTML = 'Capo:&nbsp;&nbsp;&nbsp;' + capopos;
     }
 
     //console.log('OldKeys: ' + oldKeys + ", NewKeys: " + newKeys);

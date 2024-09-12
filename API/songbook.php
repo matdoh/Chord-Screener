@@ -27,6 +27,7 @@ switch ($methode) {
                 foreach ($data->songs as $song) {
                     if($song->name == $wanted) {
                         echo json_encode($song);
+                        break;
                     }
                 }
 

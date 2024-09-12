@@ -254,3 +254,8 @@ button {
     text-align: center;
     background: var(--backlayertrans);
 }
+
+.comment {
+    font-style: italic;
+    color: var(--accent2);
+}
