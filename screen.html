@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@100..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="palette-light.css">
+    <link id="palette" rel="stylesheet" href="palette-light.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -30,10 +30,12 @@
             <button id="capoupbut" class="chordbutton" onclick="transpose(11, true)">C+</button>
             <button id="capodownbut" class="chordbutton" onclick="transpose(1, true)">C-</button>
             <button id="textmodebut" class="chordbutton" onclick="flip_textmode()">Tx</button>
+            <button id="darkmodebut" class="chordbutton" onclick="flip_darkmode()">co</button>
         </div>
         <div id="scrollingchords">
             <div id="shead">
                 <h2 id="stitle"></h2>
+                <h3 id="saltt"></h3>
                 <h3 id="sauth"></h3>
                 <h3 id="skey">Tonart: </h3>
                 <h3 id="scapo">Capo:&nbsp;&nbsp;&nbsp;0</h3>

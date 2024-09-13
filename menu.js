@@ -126,6 +126,7 @@ function open_song() {
     //console.log("Song: " + data.name + ", Key: " + data.key + ", Capo: " + data.Capo);
     document.getElementById('sauth').appendChild(document.createTextNode(currentData.author));
     document.getElementById('stitle').appendChild(document.createTextNode(currentData.name));
+    document.getElementById('saltt').appendChild(document.createTextNode(currentData.subTitle));
     generate_body(currentData.content);
     transpose(currentData.KeyShift);
     if(currentData.Capo !== 0) {transpose(12-(currentData.Capo % 12), true);}
@@ -143,6 +144,7 @@ async function back_to_list() {
 
     document.getElementById('sauth').innerHTML = '';
     document.getElementById('stitle').innerHTML = '';
+    document.getElementById('saltt').innerHTML = '';
     const body = document.getElementById('sbody');
     if(body !== null) {body.remove();}
 }
@@ -402,9 +404,20 @@ function transpose(keyShift, capotune = false) {
 function flip_textmode() {
     document.getElementById('sauth').innerHTML = '';
     document.getElementById('stitle').innerHTML = '';
+    document.getElementById('saltt').innerHTML = '';
     const body = document.getElementById('sbody');
     if(body !== null) {body.remove();}
 
     textmode *= -1;
     open_song();
+}
+
+function flip_darkmode() {
+    const palette = document.getElementById('palette');
+        console.log(palette.href);
+        if(palette.href.replace("palette-light.css", "") !== palette.href) {
+            palette.href = "palette-dark.css";
+        } else {
+            palette.href = "palette-light.css";
+        }
 }

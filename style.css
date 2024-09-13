@@ -10,6 +10,10 @@ button {
     background: rgba(0,0,0,0);
 }
 
+body {
+    background: var(--backlayer);
+}
+
 #listScreen {
     position: absolute;
     height: 100vh;
@@ -121,6 +125,7 @@ button {
     flex-direction: column;
     align-items: center;
     background: var(--backlayer);
+    transition: 0.6s;
 }
 
 #sbody {
@@ -138,6 +143,13 @@ button {
     font-size: 2.5em;
     color: var(--font);
     margin: 2.2em 0 0 0;
+}
+
+#saltt {
+    font-family: 'Azaret Mono', monospace;
+    font-size: 1.5em;
+    color: var(--font);
+    margin: 0;
 }
 
 #sauth {
@@ -211,45 +223,13 @@ button {
     font-family: 'Raleway', sans-serif;
 }
 
-/*#backtolistbut {
-    margin-left: 1.5em
-}
-
-#zoominbut {
-    margin-left: 7em;
-}
-
-#zoomoutbut {
-    margin-left: 12.5em;
-}
-
-#transupbut {
-    margin-left: 18em;
-}
-
-#transdownbut {
-    margin-left: 23.5em;
-}
-
-#capoupbut {
-    margin-left: 29em;
-}
-
-#capodownbut {
-    margin-left: 34.5em;
-}
-
-#textmodebut {
-    margin-left: 40em;
-}*/
-
 .chordbutton {
     margin: 1.5em 0 0 1.5em;
     width: 4em;
     height: 4em;
     border-radius: 50%;
     border: none;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px var(--boxshadow);
     font-family: "Azeret Mono", monospace;
     font-weight: 600;
     color: var(--accent1);
@@ -273,6 +253,7 @@ button {
     font-family: 'Azeret Mono', monospace;
     font-weight: 250;
     margin: 0;
+    color: var(--font);
 }
 
 .emline {
