@@ -1,0 +1,12 @@
+:root {
+    --dev1: #F44;
+    --dev2: #4F4;
+    --dev3: #44F;
+    --backlayer: #00fff5;
+    --backlayertrans: rgba(0, 255, 245, 0.7);
+    --font: #0029ff;
+    --accent1: #0029ff;
+    --accent2: #0029ff;
+    --boxshadow: rgba(0, 0, 0, 0.3);
+    --base1: #00fff5;
+}

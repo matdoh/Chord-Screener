@@ -22,6 +22,7 @@ var actualKey = null;
 var capopos = 0;
 var textmode = -1;
 var currentData;
+var full = false;
 
 //Initialize Site
 grab();
@@ -421,3 +422,55 @@ function flip_darkmode() {
             palette.href = "palette-light.css";
         }
 }
+
+async function fullscreen() {
+    console.log('before fullscreen(): ', full);
+    if (full) {
+        closeFullscreen();
+    } else {
+        openFullscreen();
+    }
+    console.log('after fullscreen(): ', full);
+}
+
+function openFullscreen() {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+    }
+}
+
+function closeFullscreen() {
+    console.log('here1');
+    const elem = document/*.documentElement*/;
+    if (elem.exitFullscreen) {
+        elem.exitFullscreen();
+    } else if (elem.webkitExitFullscreen) { /* Safari */
+        elem.webkitExitFullscreen();
+    } else if (elem.msExitFullscreen) { /* IE11 */
+        elem.msExitFullscreen();
+    }
+}
+
+["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange"].forEach(
+    eventType => document.addEventListener(eventType, async function () {
+        if (full) {
+            if (wakeLock != null) {wakeLock.release();}
+            full = false;
+            console.log("closed")
+        } else {
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+                console.log(wakeLock)
+            } catch {
+                console.log("no wakelock");
+            }
+            full = true;
+            console.log("opened")
+        }
+    }, false)
+);
