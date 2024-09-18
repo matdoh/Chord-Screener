@@ -25,7 +25,7 @@ var capopos = 0;
 var textmode = -1;
 var currentData;
 var full = false;
-var autoscrollvar = false;
+var autoscrollvar = true;
 var scrollspeed = 0;
 
 //Initialize Site
