@@ -473,7 +473,7 @@ function autoscroll() {
         autoscrollvar = false;
     } else {
         autoscrollvar = true;
-        init_autoscroll();
+        init_autoscroll(document.getElementById('chordScreen'), 5);
     }
 }
 
@@ -512,6 +512,46 @@ async function update_VA_speed() {
     await sleep(150);
     autoscrollvar = true;
     init_autoscroll();
+}
+
+function startAutoScroll(element, pixelsPerSecond) {
+    let lastTimestamp = 0; // Keep track of the last timestamp for smooth animation
+    let accumulatedDistance = 0; // Accumulates fractional scroll distances
+
+    function smoothScroll(timestamp) {
+        if (lastTimestamp) {
+            // Calculate time elapsed between frames in seconds
+            const elapsed = (timestamp - lastTimestamp) / 1000;
+
+            // Calculate how many pixels to scroll this frame
+            accumulatedDistance += pixelsPerSecond * elapsed;
+
+            // Scroll only full pixels and accumulate fractional scroll values
+            const scrollAmount = Math.floor(accumulatedDistance);
+            if (scrollAmount > 0) {
+                element.scrollTop += scrollAmount;
+                accumulatedDistance -= scrollAmount; // Subtract scrolled distance from accumulator
+            }
+        }
+
+        lastTimestamp = timestamp;
+
+        let stopper = false;
+        // Abbruchbedingungen
+        if (element.scrollTop >= element.scrollHeight - element.clientHeight) {
+            stopper = true;
+        }
+        if (!autoscrollvar) {
+            stopper = true;
+        }
+
+        if (!stopper) {
+            requestAnimationFrame(smoothScroll);
+        } // Continue scrolling
+    }
+
+    // Start the scrolling animation
+    requestAnimationFrame(smoothScroll);
 }
 
 ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange"].forEach(
