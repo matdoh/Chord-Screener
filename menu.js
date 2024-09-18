@@ -25,19 +25,13 @@ var capopos = 0;
 var textmode = -1;
 var currentData;
 var full = false;
-var autoscrollvar = true;
+var autoscrollvar = false;
 var scrollspeed = 0;
 
 //Initialize Site
 grab();
 dynamicsearch.addEventListener('input', search);
-scrollinput.addEventListener('input', async function fn() {
-    scrollspeed = calc_AV_speed(document.getElementById('chordScreen'));
-    autoscrollvar = false;
-    await sleep(100);
-    autoscrollvar = true;
-    init_autoscroll();
-});
+scrollinput.addEventListener('input', update_VA_speed);
 search();
 
 //Funcs
@@ -54,7 +48,7 @@ function grab(song = '') {
             }
             let res;
             res = response.json();
-            console.log(res);
+            //console.log(res);
             return res;
         })
         .then(data => {
@@ -334,7 +328,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function zoom(factor) {
+async function zoom(factor) {
     scale += factor;
 
     /*TODO FOR ZOOM: Change
@@ -361,7 +355,11 @@ function zoom(factor) {
     });
     document.querySelectorAll('.tab').forEach(parag => {
         parag.style.fontSize = `${scale * 1.1}em`;
-    })
+    });
+
+    if(autoscrollvar) {
+        await update_VA_speed()
+    }
 }
 
 function transpose(keyShift, capotune = false) {
@@ -413,7 +411,7 @@ function transpose(keyShift, capotune = false) {
     });
 }
 
-function flip_textmode() {
+async function flip_textmode() {
     document.getElementById('sauth').innerHTML = '';
     document.getElementById('stitle').innerHTML = '';
     document.getElementById('saltt').innerHTML = '';
@@ -422,6 +420,8 @@ function flip_textmode() {
 
     textmode *= -1;
     open_song();
+
+    if(autoscrollvar) {await update_VA_speed();}
 }
 
 function flip_darkmode() {
@@ -468,7 +468,6 @@ function closeFullscreen() {
 }
 
 function autoscroll() {
-    console.log('bef autoscroll: ', autoscrollvar)
     if(autoscrollvar) {
         autoscrollvar = false;
     } else {
@@ -479,10 +478,10 @@ function autoscroll() {
 
 function init_autoscroll() {
     const autoScrollDiv = document.getElementById('chordScreen');
-    console.log('scrollspeedauto', scrollspeed);
+    //console.log('scrollspeedauto', scrollspeed);
 
     const interval = setInterval(() => {
-        autoScrollDiv.scrollTo(autoScrollDiv.scrollLeft, autoScrollDiv.scrollTop + 1);
+        autoScrollDiv.scrollTo({top: autoScrollDiv.scrollTop+1, behavior: "instant"});
 
         // Stop scrolling if we reach the bottom
         if (autoScrollDiv.scrollTop >= autoScrollDiv.scrollHeight - autoScrollDiv.clientHeight) {
@@ -504,6 +503,14 @@ function calc_AV_speed(autoScrollDiv) {
     }
     let v = Math.round((t*1000)/s);
     return v;
+}
+
+async function update_VA_speed() {
+    scrollspeed = calc_AV_speed(document.getElementById('chordScreen'));
+    autoscrollvar = false;
+    await sleep(150);
+    autoscrollvar = true;
+    init_autoscroll();
 }
 
 ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange"].forEach(
