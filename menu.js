@@ -144,6 +144,7 @@ function open_song() {
 }
 
 async function back_to_list() {
+    autoscrollvar = false;
     document.getElementById('listScreen').style.left = '0';
     document.getElementById('chordScreen').style.left = '100vw';
 
