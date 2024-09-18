@@ -1,5 +1,6 @@
 //Global Vars
-const dynamicsearch = document.getElementById('searchv')
+const dynamicsearch = document.getElementById('searchv');
+const scrollinput = document.getElementById('AVSpeedIn');
 const songlist = document.getElementById('songlist');
 const Kreuzkey = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
 const bKey = ["A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab"];
@@ -16,6 +17,7 @@ const keyDict = [
     ["Gb", bKey],
     ["G", Kreuzkey],
     ["Ab", bKey]];
+const defscrolltime = 180;
 var scale = 1.0;
 var displayedKey = null;
 var actualKey = null;
@@ -23,10 +25,19 @@ var capopos = 0;
 var textmode = -1;
 var currentData;
 var full = false;
+var autoscrollvar = false;
+var scrollspeed = 0;
 
 //Initialize Site
 grab();
 dynamicsearch.addEventListener('input', search);
+scrollinput.addEventListener('input', async function fn() {
+    scrollspeed = calc_AV_speed(document.getElementById('chordScreen'));
+    autoscrollvar = false;
+    await sleep(100);
+    autoscrollvar = true;
+    init_autoscroll();
+});
 search();
 
 //Funcs
@@ -132,6 +143,7 @@ function open_song() {
     transpose(currentData.KeyShift);
     if(currentData.Capo !== 0) {transpose(12-(currentData.Capo % 12), true);}
     zoom(0);
+    scrollspeed = calc_AV_speed(document.getElementById('chordScreen'));
 
     document.getElementById('listScreen').style.left = '-100vw';
     document.getElementById('chordScreen').style.left = '0';
@@ -192,7 +204,7 @@ function generate_body(content) {
             }
         }
 
-        console.log(lines);
+        //console.log(lines);
 
         var hasnochords = parts[i+1].replace('[', '') === parts[i+1];
         var hasnotabs = parts[i+1].replace('{sot}', '') === parts[i+1];
@@ -206,7 +218,6 @@ function generate_body(content) {
                 const plinet = document.createElement('p');
                 plinet.className = 'microtext';
                 plinet.textContent = lines[ii];
-                console.log(lines[ii]);
                 pline.appendChild(plinet);
                 if(tmkillsinsts && !tablines && lines[ii]) {ppart.appendChild(pline);}
             }
@@ -454,6 +465,45 @@ function closeFullscreen() {
     } else if (elem.msExitFullscreen) { /* IE11 */
         elem.msExitFullscreen();
     }
+}
+
+function autoscroll() {
+    console.log('bef autoscroll: ', autoscrollvar)
+    if(autoscrollvar) {
+        autoscrollvar = false;
+    } else {
+        autoscrollvar = true;
+        init_autoscroll();
+    }
+}
+
+function init_autoscroll() {
+    const autoScrollDiv = document.getElementById('chordScreen');
+    console.log('scrollspeedauto', scrollspeed);
+
+    const interval = setInterval(() => {
+        autoScrollDiv.scrollTo(autoScrollDiv.scrollLeft, autoScrollDiv.scrollTop + 1);
+
+        // Stop scrolling if we reach the bottom
+        if (autoScrollDiv.scrollTop >= autoScrollDiv.scrollHeight - autoScrollDiv.clientHeight) {
+            clearInterval(interval);
+        }
+        if (!autoscrollvar) {
+            clearInterval(interval);
+        }
+    }, scrollspeed);
+}
+
+function calc_AV_speed(autoScrollDiv) {
+    let s = autoScrollDiv.scrollHeight - autoScrollDiv.clientHeight;
+    let t = currentData.Duration;
+    let settime = parseInt(scrollinput.value);
+    if(t===0) {t=defscrolltime;}
+    if(settime !== defscrolltime) {
+        t = settime;
+    }
+    let v = Math.round((t*1000)/s);
+    return v;
 }
 
 ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange"].forEach(

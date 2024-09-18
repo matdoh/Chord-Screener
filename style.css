@@ -235,6 +235,10 @@ body {
     color: var(--accent1);
     text-align: center;
     background: var(--backlayertrans);
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #butbar {
@@ -258,4 +262,18 @@ body {
 
 .emline {
     height: 0.8em;
+}
+
+.cbin {
+    appearance: none;
+    border: none;
+    margin: 0;
+    width: inherit;
+    font: inherit;
+    text-align: center;
+    background: none;
+}
+
+.cbin:focus {
+    outline: none;
 }
