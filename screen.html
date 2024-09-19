@@ -17,8 +17,7 @@
             <h1 id="ltitle">Songliste</h1>
             <input type="text" id="searchv" name="searchv" placeholder="Suche nach einem Song">
         </div>
-        <div id="songlist">
-        </div>
+        <div id="songlist"></div>
     </div>
     <div id="chordScreen">
         <div id="butbar">
@@ -32,8 +31,8 @@
             <button id="textmodebut" class="chordbutton" onclick="flip_textmode()">Tx</button>
             <button id="darkmodebut" class="chordbutton" onclick="flip_darkmode()">co</button>
             <button id="fullscreenbut" class="chordbutton" onclick="fullscreen()"><></button>
-            <button id="autoscrollbut" class="chordbutton" onclick="autoscroll()">
-                <input type="text" class="cbin" name="AVSpeed" id="AVSpeedIn" value="180">
+            <button id="autoscrollbut" class="chordbutton extendable" onclick="autoscroll()">VA
+                <input type="number" class="cbin" name="AVSpeed" id="AVSpeedIn" value="180">
             </button>
         </div>
         <div id="scrollingchords">
