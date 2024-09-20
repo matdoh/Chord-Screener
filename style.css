@@ -1,15 +1,18 @@
+:root {
+    --cb-size: 6.5vh;
+    --cbrange-len: 20vh;
+    --cbrange-fat: 2vh;
+}
+
 p {
     font-size: 1.5em;
 }
-
 h4 {
     font-size: 1.8em;
 }
-
 button {
     background: rgba(0,0,0,0);
 }
-
 body {
     background: var(--backlayer);
 }
@@ -27,7 +30,6 @@ body {
     align-items: center;
     transition: 0.6s;
 }
-
 #ltitle {
     font-family: 'Azeret Mono', monospace;
     font-weight: 600;
@@ -36,7 +38,6 @@ body {
     color: var(--font);
     margin: 0;
 }
-
 #searchv {
     height: 2em;
     -webkit-appearance: none;
@@ -51,12 +52,10 @@ body {
     border: none;
     background: none;
 }
-
 #searchv:focus {
     outline: none;
     border-bottom: 2px solid var(--accent1);
 }
-
 #header {
     padding: 0;
     margin: 2.6vw 0 3vw 0;
@@ -65,7 +64,6 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-
 #songlist {
     /*background: var(--dev1);*/
     height: calc(100% - 10vw);
@@ -73,7 +71,6 @@ body {
     margin: 0 5vw 5vw 5vw;
     overflow: scroll;
 }
-
 .songnode {
     padding: 1em;
     border-left: 1px solid var(--accent1);
@@ -81,7 +78,6 @@ body {
     border-radius: 10px 0 0 0;
     margin-bottom: 1em;
 }
-
 .listbutton {
     -webkit-appearance: none;
     appearance: none;
@@ -90,13 +86,11 @@ body {
     width: 100%;
     color: var(--font);
 }
-
 .song-title {
     font-size: 1.6em;
     margin: 0 0 0.1em 0;
     font-family: 'Raleway', sans-serif;
 }
-
 .song-author {
     font-size: 1em;
     margin: 0;
@@ -117,7 +111,6 @@ body {
     justify-content: center;*/
     display: block;
 }
-
 #scrollingchords {
     width: 90vw;
     margin-left: 5vw;
@@ -127,50 +120,43 @@ body {
     background: var(--backlayer);
     transition: 0.6s;
 }
-
 #sbody {
     max-width: inherit;
 }
-
 #shead {
     width: 100%;
     text-align: left;
     float: left;
 }
-
 #stitle {
     font-family: 'Azaret Mono', monospace;
     font-size: 2.5em;
     color: var(--font);
     margin: 2.2em 0 0 0;
 }
-
 #saltt {
     font-family: 'Azaret Mono', monospace;
     font-size: 1.5em;
     color: var(--font);
     margin: 0;
 }
-
 #sauth {
     font-family: 'Azaret Mono', monospace;
     font-size: 1.5em;
     color: var(--font);
     margin: 0;
 }
-
 #skey {
     font-family: 'Azaret Mono', monospace;
     font-size: 1em;
     margin: 1.5em 0 0 0;
-    color: var(--accent1);
+    color: var(--font);
 }
-
 #scapo {
     font-family: 'Azaret Mono', monospace;
     font-size: 1em;
     margin: 0;
-    color: var(--accent1);
+    color: var(--font);
 }
 
 .ptitle {
@@ -178,14 +164,12 @@ body {
     color: var(--font);
     margin: 0 0 0.5em 0;
 }
-
 .ppart {
     margin: 3.5em 0;
     display: flex;
     flex-direction: column;
     width: inherit;
 }
-
 .pline {
     width: inherit;
     margin-top: 0.8em;
@@ -193,7 +177,6 @@ body {
     flex-wrap: wrap;
     flex-direction: row;
 }
-
 .microblock {
     display: flex;
     flex-direction: column;
@@ -201,33 +184,42 @@ body {
     /*margin-left: 6px;*/
     height: 4em;
 }
-
 .spacebehind {
     margin-right: 6px;
 }
-
 .spacebefore {
     padding-left: 6px;
 }
-
 .chord {
     font-family: 'Azeret Mono', monospace;
     font-weight: 600;
     margin: 0 10px 0 0;
     color: var(--accent1);
 }
-
 .microtext {
     margin: 0;
     color: var(--font);
     font-family: 'Raleway', sans-serif;
 }
+.comment {
+    font-style: italic;
+    color: var(--accent2);
+}
+.tab {
+    font-family: 'Azeret Mono', monospace;
+    font-weight: 250;
+    margin: 0;
+    color: var(--font);
+}
+.emline {
+    height: 0.8em;
+}
 
 .chordbutton {
     margin: 3vh 0 0 3vh;
-    width: 6.5vh;
-    height: 6.5vh;
-    border-radius: 3.25vh;
+    width: var(--cb-size);
+    height: var(--cb-size);
+    border-radius: calc(var(--cb-size)*0.5);
     border: none;
     box-shadow: 0 0 10px var(--boxshadow);
     font-family: "Azeret Mono", monospace;
@@ -243,30 +235,12 @@ body {
     overflow: hidden;
     cursor: pointer;
 }
-
 #butbar {
     display: flex;
     position: fixed;
     flex-wrap: wrap;
     padding-right: 1.5em;
 }
-
-.comment {
-    font-style: italic;
-    color: var(--accent2);
-}
-
-.tab {
-    font-family: 'Azeret Mono', monospace;
-    font-weight: 250;
-    margin: 0;
-    color: var(--font);
-}
-
-.emline {
-    height: 0.8em;
-}
-
 .cbin {
     appearance: none;
     border: none;
@@ -279,40 +253,85 @@ body {
     display: none;
     padding: 0;
 }
-
 .cbin:focus {
     outline: none;
 }
-
 .extendable {
-    margin: 3vh 0 0 3vh;
+    /*margin: 3vh 0 0 3vh;*/
 }
-
 .cbcon {
     display: block;
     border: none;
     font: inherit;
     font-size: 2vh;
-    height: 6.5vh;
+    height: var(--cb-size);
     align-content: center;
     margin: 0;
 }
-
 .cbconbut {
-    height: 6.5vh;
-    width: 6.5vh;
+    height: var(--cb-size);
+    width: var(--cb-size);
     display: none;
     position: absolute;
 }
-
 .cbexa {
-    width: 6.5vh;
+    width: var(--cb-size);
     height: 2.5vh;
     align-content: center;
     font-size: 0.7em;
     display: none;
 }
+.cbrangediv {
+    height: var(--cbrange-len);
+    width: var(--cb-size);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.cbrange {
+    border-radius: calc(0.5*var(--cbrange-fat));
+    transform: rotate(270deg);
+    width: var(--cbrange-len);
+    min-width: var(--cbrange-len);
 
+    @media screen and (-webkit-min-device-pixel-ratio:0) {
+        & {
+            overflow: hidden;
+            height: var(--cbrange-fat);
+            -webkit-appearance: none;
+            background-color: var(--base1);
+        }
+        &::-webkit-slider-runnable-track {
+            height: var(--cbrange-fat);
+            -webkit-appearance: none;
+            transition: box-shadow 0.2s ease-in-out;
+        }
+        &::-webkit-slider-thumb {
+            transform: translate(0, calc(-50% + calc(0.5 * var(--cbrange-fat))));
+            width: var(--cbrange-fat);
+            -webkit-appearance: none;
+            height: var(--cbrange-fat);
+            /*cursor: ew-resize;*/
+            background: var(--accent1);
+            box-shadow: calc(-0.5 * var(--cbrange-len)) 0 0 calc((var(--cbrange-len) * 0.5) - (var(--cbrange-fat) * 0.5)) var(--accent2);
+            border-radius: calc(0.5 * var(--cbrange-fat));
+            transition: box-shadow 0.2s ease-in-out;
+            position: relative;
+        }
+    }
+    &::-moz-range-progress {
+        background-color: var(--accent2);
+    }
+    &::-moz-range-track {
+        background-color: var(--base1);
+    }
+    &::-ms-fill-lower {
+        background-color: var(--accent2);
+    }
+    &::-ms-fill-upper {
+        background-color: var(--base1);
+    }
+}
 #autoscrollbut:hover {
     .cbcon {
         display: none;
@@ -321,15 +340,19 @@ body {
         display: block;
     }
 }
-
 .chordbutton:hover {
     .cbconbut, .cbexa {
         display: block;
     }
 }
-
 #darkmodebut:hover {
-    height: 10.75vh; /*6.5vh def + 1*2.5vh cbexa + 3.25vh lower bar */
+    height: 10.75vh; /*6.5vh def + 1*2.5vh cbexa + 1.75vh lower bar */
+}
+#genzoombut:hover {
+    height: calc((var(--cb-size) * 1.5) + var(--cbrange-len) - (var(--cbrange-fat) * 0.5)); /*6.5vh def + 15vh range + 3.25vh lower bar*/
+    .cbin {
+        display: block;
+    }
 }
 
 /*remove the annoying wheel buttons at number inputs*/

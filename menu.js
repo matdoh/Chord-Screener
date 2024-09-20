@@ -1,6 +1,7 @@
 //Global Vars
 const dynamicsearch = document.getElementById('searchv');
 const scrollinput = document.getElementById('AVSpeedIn');
+const scaleinput = document.getElementById('ScaleIn');
 const songlist = document.getElementById('songlist');
 const Kreuzkey = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
 const bKey = ["A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab"];
@@ -32,6 +33,7 @@ var scrollspeed = 0;
 grab();
 dynamicsearch.addEventListener('input', search);
 scrollinput.addEventListener('input', update_VA_speed);
+scaleinput.addEventListener('input', zoom)
 search();
 
 //Funcs
@@ -329,15 +331,8 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function zoom(factor) {
-    scale += factor;
-
-    /*TODO FOR ZOOM: Change
-       p font-size,
-       h4 font-size,
-       .microblock height,
-       .spacebehind margin-right
-       .spacebefore padding-left*/
+async function zoom() {
+    let scale = document.getElementById('ScaleIn').value;
 
     document.querySelectorAll('.pline').forEach(parag => {
         parag.style.fontSize = `${scale * 16}px`;

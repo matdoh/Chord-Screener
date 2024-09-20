@@ -24,12 +24,6 @@
             <div id="backtolistbut" class="chordbutton" onclick="back_to_list()">
                 <div class="cbcon"><=</div>
             </div>
-            <div id="zoominbut" class="chordbutton" onclick="zoom(0.1)">
-                <div class="cbcon">A+</div>
-            </div>
-            <div id="zoomoutbut" class="chordbutton" onclick="zoom(-0.1)">
-                <div class="cbcon">A-</div>
-            </div>
             <div id="transupbut" class="chordbutton" onclick="transpose(1)">
                 <div class="cbcon">T+</div>
             </div>
@@ -49,6 +43,13 @@
                 <div class="cbconbut" onclick="flip_darkmode()"></div>
                 <div class="cbcon">co</div>
                 <div class="cbexa" onclick="set_palette('palette-blue.css')">blue</div>
+            </div>
+            <div id="genzoombut" class="chordbutton extendable">
+                <div class="cbcon">Aa</div>
+                <div class="cbrangediv">
+                    <input type="range" class="cbrange" name="scale" min="0.5" max="1.8" step="0.1" id="ScaleIn" value="1">
+                    <label for="ScaleIn"></label>
+                </div>
             </div>
             <div id="fullscreenbut" class="chordbutton" onclick="fullscreen()">
                 <div class="cbcon">&lt;&gt;</div>
