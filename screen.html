@@ -15,46 +15,47 @@
     <div id="listScreen">
         <div id="header">
             <h1 id="ltitle">Songliste</h1>
-            <input type="text" id="searchv" name="searchv" placeholder="Suche nach einem Song">
+            <label><input type="text" id="searchv" name="searchv" placeholder="Suche nach einem Song"></label>
         </div>
         <div id="songlist"></div>
     </div>
     <div id="chordScreen">
         <div id="butbar">
-            <button id="backtolistbut" class="chordbutton" onclick="back_to_list()">
+            <div id="backtolistbut" class="chordbutton" onclick="back_to_list()">
                 <div class="cbcon"><=</div>
-            </button>
-            <button id="zoominbut" class="chordbutton" onclick="zoom(0.1)">
+            </div>
+            <div id="zoominbut" class="chordbutton" onclick="zoom(0.1)">
                 <div class="cbcon">A+</div>
-            </button>
-            <button id="zoomoutbut" class="chordbutton" onclick="zoom(-0.1)">
+            </div>
+            <div id="zoomoutbut" class="chordbutton" onclick="zoom(-0.1)">
                 <div class="cbcon">A-</div>
-            </button>
-            <button id="transupbut" class="chordbutton" onclick="transpose(1)">
+            </div>
+            <div id="transupbut" class="chordbutton" onclick="transpose(1)">
                 <div class="cbcon">T+</div>
-            </button>
-            <button id="transdownbut" class="chordbutton" onclick="transpose(11)">
+            </div>
+            <div id="transdownbut" class="chordbutton" onclick="transpose(11)">
                 <div class="cbcon">T-</div>
-            </button>
-            <button id="capoupbut" class="chordbutton" onclick="transpose(11, true)">
+            </div>
+            <div id="capoupbut" class="chordbutton" onclick="transpose(11, true)">
                 <div class="cbcon">C+</div>
-            </button>
-            <button id="capodownbut" class="chordbutton" onclick="transpose(1, true)">
+            </div>
+            <div id="capodownbut" class="chordbutton" onclick="transpose(1, true)">
                 <div class="cbcon">C-</div>
-            </button>
-            <button id="textmodebut" class="chordbutton" onclick="flip_textmode()">
+            </div>
+            <div id="textmodebut" class="chordbutton" onclick="flip_textmode()">
                 <div class="cbcon">Tx</div>
-            </button>
+            </div>
             <div id="darkmodebut" class="chordbutton extendable">
                 <div class="cbcon cbconbut" onclick="flip_darkmode()">co</div>
                 <div class="cbexa" onclick="set_palette('palette-blue.css')">blue</div>
             </div>
-            <button id="fullscreenbut" class="chordbutton" onclick="fullscreen()">
-                <div class="cbcon"><></div>
-            </button>
+            <div id="fullscreenbut" class="chordbutton" onclick="fullscreen()">
+                <div class="cbcon">&lt;&gt;</div>
+            </div>
             <div id="autoscrollbut" class="chordbutton extendable" onclick="autoscroll()">
                 <p class="cbcon cbconbut">VA</p>
                 <input type="number" class="cbin cbcon" name="AVSpeed" id="AVSpeedIn" value="180">
+                <label for="AVSpeedIn"></label>
             </div>
         </div>
         <div id="scrollingchords">

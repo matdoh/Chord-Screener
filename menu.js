@@ -512,8 +512,7 @@ function calc_AV_speed(autoScrollDiv) {
     if(settime !== defscrolltime) {
         t = settime;
     }
-    let v = Math.round((t*1000)/s);
-    return v;
+    return Math.round((t * 1000) / s);
 }
 
 async function update_VA_speed() {
