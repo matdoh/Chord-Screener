@@ -241,6 +241,7 @@ body {
     flex-direction: column;*/
     transition: 0.2s;
     overflow: hidden;
+    cursor: pointer;
 }
 
 #butbar {
@@ -288,7 +289,7 @@ body {
 }
 
 .cbcon {
-    display: inherit;
+    display: block;
     border: none;
     font: inherit;
     font-size: 2vh;
@@ -300,7 +301,8 @@ body {
 .cbconbut {
     height: 6.5vh;
     width: 6.5vh;
-    align-content: center;
+    display: none;
+    position: absolute;
 }
 
 .cbexa {
@@ -308,6 +310,7 @@ body {
     height: 2.5vh;
     align-content: center;
     font-size: 0.7em;
+    display: none;
 }
 
 #autoscrollbut:hover {
@@ -315,9 +318,16 @@ body {
         display: none;
     }
     .cbin {
-        display: inline;
+        display: block;
     }
 }
+
+.chordbutton:hover {
+    .cbconbut, .cbexa {
+        display: block;
+    }
+}
+
 #darkmodebut:hover {
     height: 10.75vh; /*6.5vh def + 1*2.5vh cbexa + 3.25vh lower bar */
 }
