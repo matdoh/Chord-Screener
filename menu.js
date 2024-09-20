@@ -339,23 +339,24 @@ async function zoom(factor) {
        .spacebehind margin-right
        .spacebefore padding-left*/
 
-    document.querySelectorAll('p').forEach(parag => {
-        parag.style.fontSize = `${scale * 1.5}em`;
+    document.querySelectorAll('.pline').forEach(parag => {
+        parag.style.fontSize = `${scale * 16}px`;
+        parag.style.marginBottom = `${(1/scale) * 12.8}px`
     });
     document.querySelectorAll('h4').forEach(parag => {
-        parag.style.fontSize = `${scale * 1.8}em`;
+        parag.style.fontSize = `${scale * 28.8}px`;
     });
     document.querySelectorAll('.microblock').forEach(parag => {
-        parag.style.height = `${scale * 4}em`;
+        parag.style.height = `${scale * 64}px`;
     });
     document.querySelectorAll('.spacebehind').forEach(parag => {
-        parag.style.marginRight = `${scale * 6}px`;
+        parag.style.marginRight = `${scale * 7}px`;
     });
     document.querySelectorAll('.spacebefore').forEach(parag => {
-        parag.style.paddingLeft = `${scale * 6}px`;
+        parag.style.paddingLeft = `${scale * 7}px`;
     });
     document.querySelectorAll('.tab').forEach(parag => {
-        parag.style.fontSize = `${scale * 1.1}em`;
+        parag.style.fontSize = `${scale * 17.6}px`;
     });
 
     if(autoscrollvar) {
@@ -427,12 +428,21 @@ async function flip_textmode() {
 
 function flip_darkmode() {
     const palette = document.getElementById('palette');
-        console.log(palette.href);
         if(palette.href.replace("palette-light.css", "") !== palette.href) {
             palette.href = "palette-dark.css";
         } else {
             palette.href = "palette-light.css";
         }
+}
+
+function set_palette(value) {
+    const palette = document.getElementById('palette');
+    if(palette.href.replace(value, "") === palette.href) {
+        palette.href = value;
+    } else {
+        palette.href = "palette-light.css"
+    }
+
 }
 
 async function fullscreen() {
