@@ -39,6 +39,9 @@
             <div id="textmodebut" class="chordbutton" onclick="flip_textmode()">
                 <div class="cbcon">Tx</div>
             </div>
+            <div id="fullscreenbut" class="chordbutton" onclick="fullscreen()">
+                <div class="cbcon">&lt;&gt;</div>
+            </div>
             <div id="darkmodebut" class="chordbutton extendable">
                 <div class="cbconbut" onclick="flip_darkmode()"></div>
                 <div class="cbcon">co</div>
@@ -47,17 +50,17 @@
             <div id="genzoombut" class="chordbutton extendable">
                 <div class="cbcon">Aa</div>
                 <div class="cbrangediv">
-                    <input type="range" class="cbrange" name="scale" min="0.5" max="1.8" step="0.1" id="ScaleIn" value="1">
+                    <input type="range" class="cbrange" name="scale" min="0.5" max="1.8" step="0.025" id="ScaleIn" value="1">
                     <label for="ScaleIn"></label>
                 </div>
             </div>
-            <div id="fullscreenbut" class="chordbutton" onclick="fullscreen()">
-                <div class="cbcon">&lt;&gt;</div>
-            </div>
-            <div id="autoscrollbut" class="chordbutton extendable" onclick="autoscroll()">
-                <p class="cbcon">VA</p>
-                <input type="number" class="cbin cbcon" name="AVSpeed" id="AVSpeedIn" value="180">
-                <label for="AVSpeedIn"></label>
+            <div id="genscrollbut" class="chordbutton extendable">
+                <div class="cbconbut" onclick="autoscroll()"></div>
+                <div class="cbcon">VA</div>
+                <div class="cbrangediv">
+                    <input type="range" class="cbrange" name="zspeed" min="5" max="60" step="1" id="AVSpeedSlide" value="20">
+                    <label for="AVSpeedSlide"></label>
+                </div>
             </div>
         </div>
         <div id="scrollingchords">

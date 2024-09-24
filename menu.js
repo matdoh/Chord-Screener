@@ -1,6 +1,7 @@
 //Global Vars
 const dynamicsearch = document.getElementById('searchv');
-const scrollinput = document.getElementById('AVSpeedIn');
+const scrollinput = document.getElementById('AVSpeedSlide');
+const scrollSect = document.getElementById('chordScreen')
 const scaleinput = document.getElementById('ScaleIn');
 const songlist = document.getElementById('songlist');
 const Kreuzkey = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
@@ -18,8 +19,7 @@ const keyDict = [
     ["Gb", bKey],
     ["G", Kreuzkey],
     ["Ab", bKey]];
-const defscrolltime = 180;
-var scale = 1.0;
+const defscrollspeed = 30;
 var displayedKey = null;
 var actualKey = null;
 var capopos = 0;
@@ -27,6 +27,7 @@ var textmode = -1;
 var currentData;
 var full = false;
 var autoscrollvar = false;
+var AVThresholdStamp = 0;
 var scrollspeed = 0;
 
 //Initialize Site
@@ -499,25 +500,27 @@ function init_autoscroll() {
     }, scrollspeed);
 }
 
-function calc_AV_speed(autoScrollDiv) {
+function calc_AV_speed(autoScrollDiv = scrollSect) {
     let s = autoScrollDiv.scrollHeight - autoScrollDiv.clientHeight;
     let t = currentData.Duration;
-    let settime = parseInt(scrollinput.value);
-    if(t===0) {t=defscrolltime;}
-    if(settime !== defscrolltime) {
-        t = settime;
+    let setspeed = 1000/parseInt(scrollinput.value);
+    if(setspeed !== defscrollspeed || t===0) {
+        return setspeed;
     }
     return Math.round((t * 1000) / s);
 }
 
 async function update_VA_speed() {
-    scrollspeed = calc_AV_speed(document.getElementById('chordScreen'));
+    AVThresholdStamp = Date.now()
     autoscrollvar = false;
     await sleep(150);
+    if(Date.now() - 140 < AVThresholdStamp) {return;}
+    scrollspeed = calc_AV_speed();
     autoscrollvar = true;
     init_autoscroll();
 }
 
+//TODO:
 function startAutoScroll(element, pixelsPerSecond) {
     let lastTimestamp = 0; // Keep track of the last timestamp for smooth animation
     let accumulatedDistance = 0; // Accumulates fractional scroll distances
