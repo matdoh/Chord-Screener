@@ -34,7 +34,19 @@ var scrollspeed = 0;
 grab();
 dynamicsearch.addEventListener('input', search);
 scrollinput.addEventListener('input', update_VA_speed);
-scaleinput.addEventListener('input', zoom)
+scaleinput.addEventListener('input', zoom);
+scrollSect.addEventListener('wheel', function(event) {
+    event.preventDefault();
+
+    if (event.deltaX < 0) {
+        // User is scrolling left
+        console.log('Scrolling left!');
+        back_to_list()
+    } else if (event.deltaX > 0) {
+        // User is scrolling right
+        console.log('Scrolling right!');
+    }
+});
 search();
 
 //Funcs
