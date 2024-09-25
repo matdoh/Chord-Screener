@@ -38,7 +38,7 @@ scaleinput.addEventListener('input', zoom);
 scrollSect.addEventListener('wheel', function(event) {
     if (event.deltaX < 0) {
         event.preventDefault();
-        if (event.deltaX < -20) {
+        if (event.deltaX < -50) {
             back_to_list();
         }
     }
