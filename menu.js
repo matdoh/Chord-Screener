@@ -315,24 +315,32 @@ function generate_body(content) {
 }
 
 function partseperator(content, startv='{c: ', endv ='}') {
-    backarr = [];
-    f_ed_arr = content.split(startv);
+    let backarr = [];
+    let f_ed_arr = content.split(startv);
     /*if(f_ed_arr[0] === content) {
         backarr.push('');
         backarr.push(f_ed_arr[0]);
         return backarr;
     }*/
+    console.log(f_ed_arr);
+    let hastitle = content.startsWith(startv);
     f_ed_arr.forEach(function(e) {
-        let secttitle = e.split(endv)[0];
+        let secttitle = "";
+        if(hastitle) {
+            secttitle = e.split(endv)[0];
+        }
         let search = secttitle + endv;
         let seccon = e.replace(search, "");
-        if(secttitle === seccon) {
+        if(!hastitle) {
             backarr.push('');
+            backarr.push(e);
         } else {
             backarr.push(secttitle);
+            backarr.push(seccon);
         }
-        backarr.push(seccon);
+        hastitle = true;
     });
+    console.log(backarr);
     return backarr;
 }
 
