@@ -174,7 +174,6 @@ function generate_body(content) {
     body.id = "sbody";
 
     let parts = partseperator(content);
-
     //console.log(parts);
 
     for(let i = 0; i < parts.length; i+=2) {
@@ -187,7 +186,7 @@ function generate_body(content) {
 
         let lines = parts[i+1].split('\n');
 
-        //console.log('here');
+        //console.log(lines);
 
         let tmkillsinsts = false;
         if(textmode === 1) {
@@ -225,7 +224,7 @@ function generate_body(content) {
                 plinet.className = 'microtext';
                 plinet.textContent = lines[ii];
                 pline.appendChild(plinet);
-                if(tmkillsinsts && !tablines && lines[ii]) {ppart.appendChild(pline);}
+                if((tmkillsinsts || hasnochords) && !tablines && lines[ii]) {ppart.appendChild(pline);}
             }
             body.appendChild(ppart);
             continue;
@@ -322,7 +321,6 @@ function partseperator(content, startv='{c: ', endv ='}') {
         backarr.push(f_ed_arr[0]);
         return backarr;
     }*/
-    console.log(f_ed_arr);
     let hastitle = content.startsWith(startv);
     f_ed_arr.forEach(function(e) {
         let secttitle = "";
@@ -340,7 +338,6 @@ function partseperator(content, startv='{c: ', endv ='}') {
         }
         hastitle = true;
     });
-    console.log(backarr);
     return backarr;
 }
 
