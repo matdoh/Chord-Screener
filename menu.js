@@ -438,9 +438,9 @@ async function flip_textmode() {
 function flip_darkmode() {
     const palette = document.getElementById('palette');
         if(palette.href.replace("palette-light.css", "") !== palette.href) {
-            palette.href = "palette-dark.css";
+            palette.href = "colors/palette-dark.css";
         } else {
-            palette.href = "palette-light.css";
+            palette.href = "colors/palette-light.css";
         }
 }
 
@@ -449,7 +449,7 @@ function set_palette(value) {
     if(palette.href.replace(value, "") === palette.href) {
         palette.href = value;
     } else {
-        palette.href = "palette-light.css"
+        palette.href = "colors/palette-light.css"
     }
 
 }

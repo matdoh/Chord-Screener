@@ -346,7 +346,7 @@ body {
     }
 }
 #darkmodebut:hover {
-    height: 10.75vh; /*6.5vh def + 1*2.5vh cbexa + 1.75vh lower bar */
+    height: 13.25vh; /*6.5vh def + 2*2.5vh cbexa + 1.75vh lower bar */
 }
 #genzoombut:hover {
     height: calc((var(--cb-size) * 1.5) + var(--cbrange-len) - (var(--cbrange-fat) * 0.5)); /*6.5vh def + 15vh range + 3.25vh lower bar*/
