@@ -205,6 +205,12 @@ body {
     font-style: italic;
     color: var(--accent2);
 }
+.commentChord {
+    font-family: 'Azeret Mono', monospace;
+    font-weight: 600;
+    font-style: normal;
+    font-size: 0.8em;
+}
 .tab {
     font-family: 'Azeret Mono', monospace;
     font-weight: 250;

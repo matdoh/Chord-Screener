@@ -262,7 +262,9 @@ function generate_body(content) {
                 pline.className = "pline";
                 const plinet = document.createElement('p');
                 plinet.className = 'microtext comment';
-                plinet.textContent = line.substring(1, line.length - 1);
+                plinet.innerHTML = line.substring(1, line.length - 1)
+                    .replaceAll('[', '<span class="commentChord">')
+                    .replaceAll(']', '</span>');
                 pline.appendChild(plinet);
                 ppart.appendChild(pline);
                 return;
