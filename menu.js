@@ -352,13 +352,13 @@ async function zoom() {
 
     document.querySelectorAll('.pline').forEach(parag => {
         parag.style.fontSize = `${scale * 16}px`;
-        parag.style.marginBottom = `${(1/scale) * 12.8}px`
+        parag.style.marginBottom = `${(1/(0.5*scale+0.5)) * 12.8}px`
     });
     document.querySelectorAll('h4').forEach(parag => {
         parag.style.fontSize = `${scale * 28.8}px`;
     });
     document.querySelectorAll('.microblock').forEach(parag => {
-        parag.style.height = `${scale * 64}px`;
+        parag.style.height = `${(1.2 * scale - 0.2) * 64}px`;
     });
     document.querySelectorAll('.spacebehind').forEach(parag => {
         parag.style.marginRight = `${scale * 7}px`;
