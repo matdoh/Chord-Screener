@@ -8,6 +8,7 @@
 <h1>Consider this a Set of Sticky Notes, I refuse to write a real documentation</h1>
 <h2>Database Structure</h2>
 Italic rows are currently not used
+<h3>songs</h3>
 <table>
 <th>name</th><th>type</th><th>description</th>
 <tr>
@@ -189,5 +190,39 @@ Italic rows are currently not used
     <td>_tags</td>
     <td>Varchar(64)</td>
     <td>Actually Cool, Might implement</td>
+</tr>
+</table>
+<h3>users</h3>
+<table>
+<th>name</th><th>type</th><th>description</th>
+<tr>
+    <td>Id</td>
+    <td>Bigint(20)</td>
+    <td>...</td>
+</tr>
+<tr class="tilted">
+    <td>username</td>
+    <td>Varchar(63)</td>
+    <td>a display name</td>
+</tr>
+<tr>
+    <td>hashed_access_key</td>
+    <td>Varchar(127)</td>
+    <td>Similar to a hashed password, only key will be used to login</td>
+</tr>
+<tr>
+    <td>reference_key</td>
+    <td>Varchar(127)</td>
+    <td>Key used in visible code, to display comments etc.</td>
+</tr>
+</table>
+
+<h2>Cookies</h2>
+<table>
+<th>name</th><th>type</th><th>description</th>
+<tr>
+    <td>access</td>
+    <td>String</td>
+    <td>hashed access key from the database</td>
 </tr>
 </table>
