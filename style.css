@@ -4,19 +4,24 @@
     --cbrange-fat: 2vh;
 }
 
+/*GENERAL SETTINGS*/
 p {
     font-size: 1.5em;
 }
 h4 {
     font-size: 1.8em;
+    font-family: 'Azeret Mono', monospace;
+    font-weight: 600;
 }
 button {
     background: rgba(0,0,0,0);
 }
 body {
     background: var(--backlayer);
+    margin: 0;
 }
 
+/*LIST-SCREEN*/
 #listScreen {
     position: absolute;
     height: 100vh;
@@ -46,7 +51,6 @@ body {
     text-align: center;
     padding: 4px;
     transition: 0.15s;
-    -webkit-appearance: none;
     appearance: none;
     border-radius: 0;
     border: none;
@@ -97,6 +101,7 @@ body {
     font-family: 'Raleway', sans-serif;
 }
 
+/*CHORD-SCREEN: GENERAL*/
 #chordScreen {
     position: absolute;
     height: 100vh;
@@ -159,6 +164,7 @@ body {
     color: var(--font);
 }
 
+/*CHORD-SCREEN: SONG*/
 .ptitle {
     font-family: 'Azaret Mono', monospace;
     color: var(--font);
@@ -221,6 +227,7 @@ body {
     height: 0.8em;
 }
 
+/*CHORD-SCREEN BUTTONS*/
 .chordbutton {
     margin: 3vh 0 0 3vh;
     width: var(--cb-size);
@@ -375,4 +382,46 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 input[type="number"] {
     -moz-appearance: textfield;
+}
+
+/*DENIED-SCREEN*/
+.bigbox {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.headerbox {
+    width: 80vw;
+    margin: 10vw;
+    h4 {
+        margin: 0;
+        padding-bottom: 5vw;
+    }
+}
+#loginform {
+}
+#loginfield {
+    scale: 1.5;
+    height: 2em;
+    -webkit-appearance: none;
+    max-width: 40vw;
+    font-family: 'Raleway', sans-serif;
+    text-align: center;
+    padding: 4px;
+    transition: 0.15s;
+    appearance: none;
+    border-radius: 0;
+    border: none;
+    border-bottom: 0.5px solid var(--font);
+    background: none;
+}
+#loginfield:focus {
+    outline: none;
+    border-bottom: 2px solid var(--accent1);
 }

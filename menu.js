@@ -1,3 +1,6 @@
+//imports
+import { dynamic_text } from "./inc/utils.js";
+
 //Global Vars
 const dynamicsearch = document.getElementById('searchv');
 const scrollinput = document.getElementById('AVSpeedSlide');
@@ -30,11 +33,26 @@ var autoscrollvar = false;
 var AVThresholdStamp = 0;
 var scrollspeed = 0;
 
-//Initialize Site
+//INITIALIZE SITE
+//Start-functions
 grab();
+search();
 dynamicsearch.addEventListener('input', search);
-scrollinput.addEventListener('input', update_VA_speed);
+//chordbarbuts
+document.getElementById("backtolistbut").addEventListener("click", back_to_list);
+document.getElementById("transupbut").addEventListener("click", () => transpose(1));
+document.getElementById("transdownbut").addEventListener("click", () => transpose(11));
+document.getElementById("capoupbut").addEventListener("click", () => transpose(11, true));
+document.getElementById("capodownbut").addEventListener("click", () => transpose(1, true));
+document.getElementById("textmodebut").addEventListener("click", flip_textmode);
+document.getElementById("fullscreenbut").addEventListener("click", fullscreen);
+document.getElementById("cbcolbut").addEventListener("click", flip_darkmode);
+document.getElementById("cbblue").addEventListener("click", () => set_palette('colors/palette-blue.css'));
+document.getElementById("cbboard").addEventListener("click", () => set_palette('colors/palette-blackboard.css'));
 scaleinput.addEventListener('input', zoom);
+document.getElementById("cbscrbut").addEventListener('click', autoscroll);
+scrollinput.addEventListener('input', update_VA_speed);
+//guesture control
 scrollSect.addEventListener('wheel', function(event) {
     if (event.deltaX < 0) {
         event.preventDefault();
@@ -43,7 +61,6 @@ scrollSect.addEventListener('wheel', function(event) {
         }
     }
 });
-search();
 
 //Funcs
 function grab(song = '') {
@@ -66,7 +83,11 @@ function grab(song = '') {
             if(song === '') {
                 data.sort();
                 data.forEach(function(song){
-                    songlist.appendChild(create_songnode(song));
+                    const el = create_songnode(song)
+                    songlist.appendChild(el);
+                    el.addEventListener("click", () => {
+                        grab(song[0])
+                    })
                 });
             } else {
                 console.log(data);
@@ -86,7 +107,6 @@ function create_songnode(song) {
     songnode.setAttribute("data-search", song[2]);
     const link = document.createElement("button");
     link.className = "listbutton"
-    link.setAttribute('onclick', `grab(\'${song[0]}\')`);
     songnode.appendChild(link);
     const songtitle = document.createElement("h5");
     songtitle.className = "song-title";
@@ -104,7 +124,7 @@ function create_songnode(song) {
 }
 
 function search() {
-    // Temporarily create a span element to measure text width
+    /*// Temporarily create a span element to measure text width
     const tempSpan = document.createElement('span');
     tempSpan.style.visibility = 'hidden';
     tempSpan.style.position = 'absolute';
@@ -120,7 +140,9 @@ function search() {
     // Adjust the input width based on the span's width
     dynamicsearch.style.width = (tempSpan.offsetWidth + 10) + 'px';
 
-    document.body.removeChild(tempSpan);
+    document.body.removeChild(tempSpan);*/
+
+    dynamic_text(dynamicsearch);
 
     //implementing search behavior
     var current_text = document.getElementById('searchv').value.toLowerCase()
