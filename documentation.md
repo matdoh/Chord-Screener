@@ -6,6 +6,19 @@
 </style>
 
 <h1>Consider this a Set of Sticky Notes, I refuse to write a real documentation</h1>
+<h2>define_con.php</h2>
+there is a file called "define_con.php" in the main folder. It will not be put on git for safety-reasons, but it looks like this:
+
+```php
+$servername = "localhost";
+$user = "some username";
+$pw = "some password";
+$db = "some database name";
+
+$_SESSION["con"] = new mysqli($servername, $user, $pw, $db);
+$_SESSION["con"]->set_charset("utf8");
+$_SESSION["db"] = true;
+```
 <h2>Database Structure</h2>
 Italic rows are currently not used
 <h3>songs</h3>
@@ -224,5 +237,10 @@ Italic rows are currently not used
     <td>access</td>
     <td>String</td>
     <td>hashed access key from the database</td>
+</tr>
+<tr>
+    <td>ref</td>
+    <td>String</td>
+    <td>another hash value of lower security significance</td>
 </tr>
 </table>
