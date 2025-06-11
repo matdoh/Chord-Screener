@@ -3,6 +3,12 @@
         font-style: italic;
         opacity: 60%;
     }
+    .outdated {
+        color: #660000
+    }
+    .new {
+        color: #44FF44;
+    }
 </style>
 
 <h1>Consider this a Set of Sticky Notes, I refuse to write a real documentation</h1>
@@ -64,7 +70,7 @@ Italic rows are currently not used
     <td>Int(1)</td>
     <td>...</td>
 </tr>
-<tr class="tilted">
+<tr>
     <td>Id</td>
     <td>Int(255)</td>
     <td>...</td>
@@ -99,7 +105,7 @@ Italic rows are currently not used
     <td>Varchar(256)</td>
     <td>I must've known at some point but not anymore</td>
 </tr>
-<tr class="tilted">
+<tr>
     <td>SongNumber</td>
     <td>Int(10)</td>
     <td>...</td>
@@ -134,7 +140,7 @@ Italic rows are currently not used
     <td>Varchar(128)</td>
     <td>...</td>
 </tr>
-<tr>
+<tr class="outdated">
     <td>content</td>
     <td>Varchar(8192)</td>
     <td>The entire ChordPro-Content</td>
@@ -203,6 +209,16 @@ Italic rows are currently not used
     <td>_tags</td>
     <td>Varchar(64)</td>
     <td>Actually Cool, Might implement</td>
+</tr>
+<tr class="new">
+    <td>parts</td>
+    <td>Varchar(8192)</td>
+    <td>array(array(header, content))</td>
+</tr>
+<tr class="new">
+    <td>commentMatrix</td>
+    <td>Varchar(1023)</td>
+    <td>dict(author, dict(part, array(array(line, content))))</td>
 </tr>
 </table>
 <h3>users</h3>

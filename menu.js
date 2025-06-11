@@ -65,7 +65,7 @@ scrollSect.addEventListener('wheel', function(event) {
 //Funcs
 function grab(song = '') {
     // Define the API URL
-    let apiUrl = 'API/songbook.php';
+    let apiUrl = 'API/sql.php';
     if(song !== '') {apiUrl += '/?song=' + song}
 
     // Make a GET request
