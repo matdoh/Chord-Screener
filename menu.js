@@ -23,6 +23,7 @@ const keyDict = [
     ["G", Kreuzkey],
     ["Ab", bKey]];
 const defscrollspeed = 30;
+var viewer = "";
 var displayedKey = null;
 var actualKey = null;
 var capopos = 0;
@@ -35,6 +36,7 @@ var scrollspeed = 0;
 
 //INITIALIZE SITE
 //Start-functions
+setViewer();
 grab();
 search();
 dynamicsearch.addEventListener('input', search);
@@ -63,6 +65,13 @@ scrollSect.addEventListener('wheel', function(event) {
 });
 
 //Funcs
+function setViewer() {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ref=`);
+    if (parts.length >= 2) {
+        viewer = parts.pop().split(';').shift();
+    }
+}
 function grab(song = '') {
     // Define the API URL
     let apiUrl = 'API/sql.php';
@@ -90,8 +99,10 @@ function grab(song = '') {
                     })
                 });
             } else {
-                console.log(data);
+                console.log(data.parts);
                 currentData = data;
+                currentData.parts = JSON.parse(currentData.parts);
+                currentData.commentMatrix = JSON.parse(currentData.commentMatrix);
                 open_song();
             }
             //console.log(data);
@@ -124,30 +135,10 @@ function create_songnode(song) {
 }
 
 function search() {
-    /*// Temporarily create a span element to measure text width
-    const tempSpan = document.createElement('span');
-    tempSpan.style.visibility = 'hidden';
-    tempSpan.style.position = 'absolute';
-    tempSpan.style.whiteSpace = 'pre';
-    tempSpan.textContent = dynamicsearch.value || dynamicsearch.placeholder;
-
-    // Copy font properties from input to span to ensure consistent measurement
-    const inputStyles = window.getComputedStyle(dynamicsearch);
-    tempSpan.style.font = inputStyles.font;
-
-    document.body.appendChild(tempSpan);
-
-    // Adjust the input width based on the span's width
-    dynamicsearch.style.width = (tempSpan.offsetWidth + 10) + 'px';
-
-    document.body.removeChild(tempSpan);*/
-
     dynamic_text(dynamicsearch);
-
     //implementing search behavior
     var current_text = document.getElementById('searchv').value.toLowerCase()
         .replaceAll('ü', 'u').replaceAll('ä', 'a').replaceAll('ö', 'o').replaceAll('ß', 's');
-    //console.log(songlist.childNodes);
     songlist.childNodes.forEach(function(listNode){
         if(listNode.toString() !== '[object Text]') {
             if(listNode.getAttribute("data-search").includes(current_text)) {
@@ -162,11 +153,11 @@ function open_song() {
     displayedKey = currentData.key % 12;
     actualKey = currentData.key % 12;
     capopos = 0;
-    //console.log("Song: " + data.name + ", Key: " + data.key + ", Capo: " + data.Capo);
+    console.log("Song: " + currentData.name + ", Key: " + currentData.key + ", Capo: " + currentData.Capo);
     document.getElementById('sauth').appendChild(document.createTextNode(currentData.author));
     document.getElementById('stitle').appendChild(document.createTextNode(currentData.name));
     document.getElementById('saltt').appendChild(document.createTextNode(currentData.subTitle));
-    generate_body(currentData.content);
+    generate_body(currentData.parts, currentData.commentMatrix);
     transpose(currentData.KeyShift);
     if(currentData.Capo !== 0) {transpose(12-(currentData.Capo % 12), true);}
     zoom(0);
@@ -190,23 +181,31 @@ async function back_to_list() {
     if(body !== null) {body.remove();}
 }
 
-function generate_body(content) {
+function generate_body(parts, commentMatrix) {
     //console.log(content);
     const body = document.createElement('div');
     body.id = "sbody";
 
-    let parts = partseperator(content);
     //console.log(parts);
 
-    for(let i = 0; i < parts.length; i+=2) {
+    for(let i = 0; i < parts.length; i++) {
         const ppart = document.createElement('div');
         ppart.className = 'ppart';
         const ptitle = document.createElement('h4');
         ptitle.className = 'ptitle';
-        ptitle.appendChild(document.createTextNode(parts[i]));
+        ptitle.appendChild(document.createTextNode(parts[i][0]));
         ppart.appendChild(ptitle);
 
-        let lines = parts[i+1].split('\n');
+        //console.log(parts[i]);
+
+        let lines = parts[i][1].split('\n');
+
+        let comms = commentMatrix[viewer][String(i)];
+        if(comms) {
+            for(let ii = 0; ii < comms.length; ii++) {
+                lines.splice(comms[ii][0], 0, "(" + comms[ii][1] + ")");
+            }
+        }
 
         //console.log(lines);
 
@@ -233,8 +232,8 @@ function generate_body(content) {
 
         //console.log(lines);
 
-        var hasnochords = parts[i+1].replace('[', '') === parts[i+1];
-        var hasnotabs = parts[i+1].replace('{sot}', '') === parts[i+1];
+        var hasnochords = parts[i][1].replace('[', '') === parts[i][1];
+        var hasnotabs = parts[i][1].replace('{sot}', '') === parts[i][1];
         var tablines = false;
         if(hasnochords && hasnotabs || textmode === 1) {
             for(let ii = 0; ii < lines.length; ii++) {

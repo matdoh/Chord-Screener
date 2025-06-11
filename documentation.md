@@ -75,10 +75,10 @@ Italic rows are currently not used
     <td>Int(255)</td>
     <td>...</td>
 </tr>
-<tr class="tilted">
+<tr>
     <td>KeyShift</td>
     <td>Int(4)</td>
-    <td>Problably to change displayed Key w/o using actual key, might implement at some point</td>
+    <td>The set key (not the Original Key)</td>
 </tr>
 <tr class="tilted">
     <td>LinkedAudio</td>
