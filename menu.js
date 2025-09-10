@@ -1,10 +1,11 @@
 //imports
-import { dynamic_text } from "./inc/utils.js";
+import {dynamic_text, sleep} from "./inc/utils.js";
 
 //Global Vars
 const dynamicsearch = document.getElementById('searchv');
 const scrollinput = document.getElementById('AVSpeedSlide');
 const scrollSect = document.getElementById('chordScreen')
+const editSect = document.getElementById('editScreen')
 const scaleinput = document.getElementById('ScaleIn');
 const songlist = document.getElementById('songlist');
 const Kreuzkey = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
@@ -32,7 +33,9 @@ var currentData;
 var full = false;
 var autoscrollvar = false;
 var AVThresholdStamp = 0;
+var GuestureThresholdStamp = 0;
 var scrollspeed = 0;
+var current_window = "list"; // "chords", "edit", "add"
 
 //INITIALIZE SITE
 //Start-functions
@@ -54,12 +57,22 @@ document.getElementById("cbboard").addEventListener("click", () => set_palette('
 scaleinput.addEventListener('input', zoom);
 document.getElementById("cbscrbut").addEventListener('click', autoscroll);
 scrollinput.addEventListener('input', update_VA_speed);
+document.getElementById("editbut").addEventListener("click", open_editor);
 //guesture control
 scrollSect.addEventListener('wheel', function(event) {
     if (event.deltaX < 0) {
         event.preventDefault();
-        if (event.deltaX < -50) {
+        if (event.deltaX < -50 && Date.now() - 1000 > GuestureThresholdStamp) {
             back_to_list();
+        }
+    }
+});
+editSect.addEventListener('wheel', function(event) {
+    if (event.deltaX < 0) {
+        event.preventDefault();
+        if (event.deltaX < -50) {
+            discard_song();
+            GuestureThresholdStamp = Date.now()
         }
     }
 });
@@ -153,7 +166,7 @@ function open_song() {
     displayedKey = currentData.key % 12;
     actualKey = currentData.key % 12;
     capopos = 0;
-    console.log("Song: " + currentData.name + ", Key: " + currentData.key + ", Capo: " + currentData.Capo);
+    console.log("Song: " + currentData.name + ", Key: " + currentData.key + ", KeyShift: " + currentData.KeyShift + ", Capo: " + currentData.Capo);
     document.getElementById('sauth').appendChild(document.createTextNode(currentData.author));
     document.getElementById('stitle').appendChild(document.createTextNode(currentData.name));
     document.getElementById('saltt').appendChild(document.createTextNode(currentData.subTitle));
@@ -165,12 +178,14 @@ function open_song() {
 
     document.getElementById('listScreen').style.left = '-100vw';
     document.getElementById('chordScreen').style.left = '0';
+    current_window = "chords"
 }
 
 async function back_to_list() {
     autoscrollvar = false;
     document.getElementById('listScreen').style.left = '0';
     document.getElementById('chordScreen').style.left = '100vw';
+    current_window = "list"
 
     await sleep(1000);
 
@@ -179,6 +194,46 @@ async function back_to_list() {
     document.getElementById('saltt').innerHTML = '';
     const body = document.getElementById('sbody');
     if(body !== null) {body.remove();}
+}
+
+function open_editor() {
+    var editor = document.getElementById('editScreen');
+    /*editor.style.display = 'block';*/
+    editor.style.left = '0';
+
+    if(current_window === "chords") {
+        document.getElementById('chordScreen').style.left = '-100vw';
+        current_window = "edit";
+
+        document.getElementById('eauth').value = currentData.author;
+        document.getElementById('etitle').value = currentData.name;
+        document.getElementById('ealtt').value = currentData.subTitle;
+        document.getElementById('ekey').value = currentData.key;
+        document.getElementById('ekeyshift').value = currentData.KeyShift;
+        document.getElementById('ecapo').value = currentData.Capo;
+    } else if(current_window === "list") {
+        document.getElementById('listScreen').style.left = '-100vw';
+        current_window = "add";
+        document.getElementById('eauth').value = '';
+        document.getElementById('etitle').value = '';
+        document.getElementById('ealtt').value = '';
+        document.getElementById('ekey').value = 0;
+        document.getElementById('ekeyshift').value = 0;
+        document.getElementById('ecapo').value = 0;
+    }
+    document.getElementById("savebut").addEventListener("click", save_song);
+    document.getElementById("discardbut").addEventListener("click", discard_song);
+}
+function save_song() {}
+function discard_song() {
+    document.getElementById('editScreen').style.left = '100vw';
+    if(current_window === "edit") {
+        document.getElementById('chordScreen').style.left = '0';
+        current_window = "chords";
+    } else if(current_window === "add") {
+        document.getElementById('listScreen').style.left = '0';
+        current_window = "list";
+    }
 }
 
 function generate_body(parts, commentMatrix) {
@@ -362,10 +417,6 @@ function partseperator(content, startv='{c: ', endv ='}') {
         hastitle = true;
     });
     return backarr;
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function zoom() {

@@ -17,3 +17,6 @@ export function dynamic_text(input) {
 
     document.body.removeChild(tempSpan);
 }
+export function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

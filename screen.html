@@ -63,6 +63,9 @@
                     <label for="AVSpeedSlide"></label>
                 </div>
             </div>
+            <div id="editbut" class="chordbutton">
+                <div class="cbcon">ed</div>
+            </div>
         </div>
         <div id="scrollingchords">
             <div id="shead">
@@ -71,6 +74,26 @@
                 <h3 id="sauth"></h3>
                 <h3 id="skey">Tonart: </h3>
                 <h3 id="scapo">Capo:&nbsp;&nbsp;&nbsp;0</h3>
+            </div>
+        </div>
+    </div>
+    <div id="editScreen">
+        <div id="editbutbar">
+            <div id="savebut" class="chordbutton">
+                <div class="cbcon">*s</div>
+            </div>
+            <div id="discardbut" class="chordbutton">
+                <div class="cbcon">XX</div>
+            </div>
+        </div>
+        <div id="editor">
+            <div id="ehead">
+                <label><input type="text" id="etitle" placeholder="Songtitel"></label>
+                <label><input type="text" placeholder="Alternativtitel" id="ealtt"></label>
+                <label><input type="text" placeholder="Künstler" id="eauth"></label>
+                <label>Originaltonart: <input type="number" step="1" min="0" max="11" id="ekey"></label>
+                <label>Tonartenverschiebung: <input type="number" step="1" min="0" max="11" id="ekeyshift"></label>
+                <label>Capo: <input type="number" step="1" min="0" max="11" id="ecapo"></label>
             </div>
         </div>
     </div>
