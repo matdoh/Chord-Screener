@@ -400,9 +400,59 @@ input[type="number"] {
     background: var(--backlayer);
     left: 100vw;
     top: 0;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll;
     transition: 0.6s;
     /*display: none;*/
+}
+
+#editor {
+    margin-top: calc(var(--cb-size) + 6vh);
+    padding: 0 5vw;
+}
+
+#ehead {
+    display: flex;
+    flex-direction: column;
+    label input[type=text] {
+        width: 100%;
+    }
+}
+
+#ebody {
+    display: flex;
+    flex-direction: column;
+    gap: 6vh;
+}
+
+.vstack {
+    display: flex;
+    flex-direction: column;
+}
+
+.buttonvstack {
+    height: calc(var(--cb-size) * 2 + 9vh);
+}
+
+.textvstack {
+    gap: 1.5vh;
+    width: 100%;
+}
+
+.ebptitle, .ebpcontent {
+    background: var(--base2);
+    border: 1px solid var(--font);
+    color: var(--font);
+    font-family: "Azeret Mono", monospace;
+    border-radius: 2px;
+    width: 100%;
+}
+
+.hstack {
+    display: flex;
+    flex-direction: row;
+    gap: 3vh;
+    align-items: center;
 }
 
 /*DENIED-SCREEN*/

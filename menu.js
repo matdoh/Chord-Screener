@@ -36,6 +36,7 @@ var AVThresholdStamp = 0;
 var GuestureThresholdStamp = 0;
 var scrollspeed = 0;
 var current_window = "list"; // "chords", "edit", "add"
+var editor_stage = [[""]];
 
 //INITIALIZE SITE
 //Start-functions
@@ -211,6 +212,7 @@ function open_editor() {
         document.getElementById('ekey').value = currentData.key;
         document.getElementById('ekeyshift').value = currentData.KeyShift;
         document.getElementById('ecapo').value = currentData.Capo;
+        generate_editor_body();
     } else if(current_window === "list") {
         document.getElementById('listScreen').style.left = '-100vw';
         current_window = "add";
@@ -224,6 +226,44 @@ function open_editor() {
     document.getElementById("savebut").addEventListener("click", save_song);
     document.getElementById("discardbut").addEventListener("click", discard_song);
 }
+
+function generate_editor_body() {
+    editor_stage = currentData.parts;
+    console.log(editor_stage);
+
+    let innerhtmlstring="";
+
+    for(let i = 0; i < editor_stage.length; i++) {
+        innerhtmlstring += '<div class="epart" data-id="' + i + '">' +
+            '                   <div class="hstack">\n' +
+            '                        <div class="vstack buttonvstack">\n' +
+            '                            <div class="chordbutton">\n' +
+            '                                <div class="cbcon">^</div>\n' +
+            '                            </div>\n' +
+            '                            <div class="chordbutton">\n' +
+            '                                <div class="cbcon">v</div>\n' +
+            '                            </div>\n' +
+            '                        </div>\n' +
+            '                        <div class="vstack textvstack">' +
+            '                           <div class="ebptitle" contenteditable="true">' + editor_stage[i][0] + '</div>\n' +
+            '                           <div class="ebpcontent" contenteditable="true">' + prepare_textarea(editor_stage[i][1]) + '</div>\n' +
+            '                        </div>' +
+            '                   </div>\n' +
+            '               </div>';
+    }
+
+    document.getElementById('ebody').innerHTML = innerhtmlstring;
+}
+
+function prepare_textarea(text) {
+    let returnsting = ""
+    let lines = text.split('\n');
+    for(let i = 0; i < lines.length; i++) {
+        returnsting += "<div>" + lines[i] + "</div>";
+    }
+    return returnsting;
+}
+
 function save_song() {}
 function discard_song() {
     document.getElementById('editScreen').style.left = '100vw';
