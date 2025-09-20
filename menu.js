@@ -36,7 +36,8 @@ var AVThresholdStamp = 0;
 var GuestureThresholdStamp = 0;
 var scrollspeed = 0;
 var current_window = "list"; // "chords", "edit", "add"
-var editor_stage = [[""]];
+var editor_len = 0;
+var editor_comments = {}
 
 //INITIALIZE SITE
 //Start-functions
@@ -59,6 +60,7 @@ scaleinput.addEventListener('input', zoom);
 document.getElementById("cbscrbut").addEventListener('click', autoscroll);
 scrollinput.addEventListener('input', update_VA_speed);
 document.getElementById("editbut").addEventListener("click", open_editor);
+
 //guesture control
 scrollSect.addEventListener('wheel', function(event) {
     if (event.deltaX < 0) {
@@ -228,31 +230,60 @@ function open_editor() {
 }
 
 function generate_editor_body() {
-    editor_stage = currentData.parts;
-    console.log(editor_stage);
+    let editor_stage = currentData.parts;
+    editor_len = editor_stage.length;
+    editor_comments = currentData.commentMatrix;
 
     let innerhtmlstring="";
 
     for(let i = 0; i < editor_stage.length; i++) {
-        innerhtmlstring += '<div class="epart" data-id="' + i + '">' +
-            '                   <div class="hstack">\n' +
-            '                        <div class="vstack buttonvstack">\n' +
-            '                            <div class="chordbutton">\n' +
-            '                                <div class="cbcon">^</div>\n' +
-            '                            </div>\n' +
-            '                            <div class="chordbutton">\n' +
-            '                                <div class="cbcon">v</div>\n' +
-            '                            </div>\n' +
-            '                        </div>\n' +
-            '                        <div class="vstack textvstack">' +
-            '                           <div class="ebptitle" contenteditable="true">' + editor_stage[i][0] + '</div>\n' +
-            '                           <div class="ebpcontent" contenteditable="true">' + prepare_textarea(editor_stage[i][1]) + '</div>\n' +
-            '                        </div>' +
-            '                   </div>\n' +
-            '               </div>';
+        innerhtmlstring += `<div class="epart" data-id="${i}">                   
+                                <div class="hstack">
+                                    <div class="vstack buttonvstack">
+                                        <div class="chordbutton moveup" data-id="${i}">
+                                            <div class="cbcon">^</div>
+                                        </div>
+                                        <div class="chordbutton movedown" data-id="${i}">
+                                            <div class="cbcon">v</div>
+                                        </div>
+                                    </div>
+                                    <div class="vstack textvstack">                           
+                                        <div class="ebptitle" contenteditable="true">${editor_stage[i][0]}</div>
+                                        <div class="ebpcontent" contenteditable="true">${prepare_textarea(editor_stage[i][1])}</div>
+                                    </div>                   
+                                </div>
+                            </div>`;
     }
 
     document.getElementById('ebody').innerHTML = innerhtmlstring;
+
+    document.querySelectorAll('.moveup').forEach(function(moveup) {
+        moveup.addEventListener('click', () => nodeswitch(parseInt(moveup.dataset.id)));
+    })
+    document.querySelectorAll('.movedown').forEach(function(movedown) {
+        movedown.addEventListener('click', () => nodeswitch(parseInt(movedown.dataset.id) + 1));
+    })
+}
+
+function nodeswitch(id) {
+    //filter invalid cases
+    if(id===0) {console.log("cannot move first up"); return;}
+    if(id===editor_len) {console.log("cannot move last down"); return;}
+
+    const parent = document.getElementById('ebody');
+    const oldfirst = parent.querySelector(`[data-id="${id-1}"]`);
+    const newfirst = parent.querySelector(`[data-id="${id}"]`);
+
+    //displayed values
+    parent.insertBefore(newfirst, oldfirst);
+    oldfirst.dataset.id = id;
+    oldfirst.querySelector('.moveup').dataset.id = id;
+    oldfirst.querySelector('.movedown').dataset.id = id;
+    newfirst.dataset.id = id-1;
+    newfirst.querySelector('.moveup').dataset.id = id-1;
+    newfirst.querySelector('.movedown').dataset.id = id-1;
+
+    //TODO: comment matrix
 }
 
 function prepare_textarea(text) {
@@ -264,7 +295,61 @@ function prepare_textarea(text) {
     return returnsting;
 }
 
-function save_song() {}
+async function save_song() {
+    //setup vars for the api
+    let apiUrl = 'API/sql.php';
+    let data = {}
+    let parts = []
+
+    //build my songmatrix
+    for (let i = 0; i < editor_len; i++) {
+        let parttuple = [];
+        let texts = document.querySelector(`.epart[data-id="${i}"] .hstack .textvstack`);
+
+        parttuple.push(texts.querySelector('.ebptitle').textContent);
+        parttuple.push(texts.querySelector('.ebpcontent').innerHTML
+            .replaceAll("</div><div>", "\n")
+            .replace("<div>", "")
+            .replace("</div>", ""));
+
+        parts.push(parttuple);
+    }
+
+    console.log(parts);
+
+    //file in the vars
+    if(current_window === "edit") {
+        data.action = "edit";
+    } else if(current_window === "add") {
+        data.action = "add";
+        alert("Dunno how u got here but that doesnt work!");
+    }
+
+    //fetch
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",  // tell server it's JSON
+            },
+            body: JSON.stringify(data),            // convert JS object to JSON
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();    // parse response JSON
+        return result;
+    } catch (error) {
+        console.error("POST request failed:", error);
+    }
+
+    document.getElementById('editScreen').style.left = '100vw';
+    document.getElementById('chordScreen').style.left = '0';
+    current_window = "chords";*/
+}
+
 function discard_song() {
     document.getElementById('editScreen').style.left = '100vw';
     if(current_window === "edit") {
