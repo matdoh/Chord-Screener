@@ -347,7 +347,7 @@ async function save_song() {
 
     document.getElementById('editScreen').style.left = '100vw';
     document.getElementById('chordScreen').style.left = '0';
-    current_window = "chords";*/
+    current_window = "chords";
 }
 
 function discard_song() {
