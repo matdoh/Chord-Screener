@@ -169,6 +169,14 @@ function open_song() {
     displayedKey = currentData.key % 12;
     actualKey = currentData.key % 12;
     capopos = 0;
+
+    //clear current body
+    document.getElementById('sauth').innerHTML = '';
+    document.getElementById('stitle').innerHTML = '';
+    document.getElementById('saltt').innerHTML = '';
+    const body = document.getElementById('sbody');
+    if(body !== null) {body.remove();}
+
     console.log("Song: " + currentData.name + ", Key: " + currentData.key + ", KeyShift: " + currentData.KeyShift + ", Capo: " + currentData.Capo);
     document.getElementById('sauth').appendChild(document.createTextNode(currentData.author));
     document.getElementById('stitle').appendChild(document.createTextNode(currentData.name));
@@ -224,6 +232,7 @@ function open_editor() {
         document.getElementById('ekey').value = 0;
         document.getElementById('ekeyshift').value = 0;
         document.getElementById('ecapo').value = 0;
+        //maybe TODO: set current_Data
     }
     document.getElementById("savebut").addEventListener("click", save_song);
     document.getElementById("discardbut").addEventListener("click", discard_song);
@@ -315,15 +324,23 @@ async function save_song() {
         parts.push(parttuple);
     }
 
-    console.log(parts);
-
     //file in the vars
     if(current_window === "edit") {
         data.action = "edit";
+        data.name = document.querySelector('#etitle').value;
+        data.altt = document.querySelector('#ealtt').value;
+        data.auth = document.querySelector('#eauth').value;
+        data.key = document.querySelector('#ekey').value;
+        data.keyshift = document.querySelector('#ekeyshift').value;
+        data.capo = document.querySelector('#ecapo').value;
+        data.parts = parts;
     } else if(current_window === "add") {
         data.action = "add";
         alert("Dunno how u got here but that doesnt work!");
     }
+
+    console.log(data);
+    console.log(currentData);
 
     //fetch
     try {
@@ -339,15 +356,13 @@ async function save_song() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result = await response.json();    // parse response JSON
-        return result;
+        //return await response.text();
     } catch (error) {
         console.error("POST request failed:", error);
     }
 
+    grab(data.name)
     document.getElementById('editScreen').style.left = '100vw';
-    document.getElementById('chordScreen').style.left = '0';
-    current_window = "chords";
 }
 
 function discard_song() {
