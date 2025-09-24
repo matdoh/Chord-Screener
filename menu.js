@@ -115,7 +115,7 @@ function grab(song = '') {
                     })
                 });
             } else {
-                console.log(data.parts);
+                //console.log(data.parts);
                 currentData = data;
                 currentData.parts = JSON.parse(currentData.parts);
                 currentData.commentMatrix = JSON.parse(currentData.commentMatrix);
@@ -177,7 +177,7 @@ function open_song() {
     const body = document.getElementById('sbody');
     if(body !== null) {body.remove();}
 
-    console.log("Song: " + currentData.name + ", Key: " + currentData.key + ", KeyShift: " + currentData.KeyShift + ", Capo: " + currentData.Capo);
+    //console.log("Song: " + currentData.name + ", Key: " + currentData.key + ", KeyShift: " + currentData.KeyShift + ", Capo: " + currentData.Capo);
     document.getElementById('sauth').appendChild(document.createTextNode(currentData.author));
     document.getElementById('stitle').appendChild(document.createTextNode(currentData.name));
     document.getElementById('saltt').appendChild(document.createTextNode(currentData.subTitle));
@@ -324,7 +324,7 @@ async function save_song() {
         parts.push(parttuple);
     }
 
-    //file in the vars
+    //file in the vars, TODO: Deepsearch
     if(current_window === "edit") {
         data.action = "edit";
         data.name = document.querySelector('#etitle').value;
@@ -333,14 +333,15 @@ async function save_song() {
         data.key = document.querySelector('#ekey').value;
         data.keyshift = document.querySelector('#ekeyshift').value;
         data.capo = document.querySelector('#ecapo').value;
-        data.parts = parts;
+        data.parts = JSON.stringify(parts);
+        data.id = currentData["Id"];
     } else if(current_window === "add") {
         data.action = "add";
         alert("Dunno how u got here but that doesnt work!");
     }
 
-    console.log(data);
-    console.log(currentData);
+    //console.log(data);
+    //console.log(currentData);
 
     //fetch
     try {
@@ -356,7 +357,7 @@ async function save_song() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        //return await response.text();
+        console.log(await response.text());
     } catch (error) {
         console.error("POST request failed:", error);
     }

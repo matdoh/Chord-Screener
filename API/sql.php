@@ -41,11 +41,25 @@ switch ($methode) {
                 break;
         }
         break;
-    /*case 'POST':
-        $wanted = "create";
-        switch ($wanted) {
-            case "create":
+    case 'POST':
+        $rawData = file_get_contents("php://input");
+        $data = json_decode($rawData, true);
 
-        }*/
+        if ($data["action"] == "edit") {
+            $editsql = $con->prepare("UPDATE `songs` SET `name` = ?, `subTitle` = ?, `author` = ?, `key` = ?, `KeyShift` = ?, `Capo` = ?, `parts` = ? WHERE `songs`.`Id` = ?;");
+            if ($editsql) {
+                $editsql->bind_param("sssiiisi", $data["name"], $data["altt"], $data["auth"], $data["key"], $data["keyshift"], $data["capo"], $data["parts"], $data["id"]);
+                if ($editsql->execute()) {
+                    echo "oki u good";
+                } else {
+                    echo "There was a meowstake: " . $editsql->error;
+                }
+            } else {
+                die("SQL error: " . $con->error);
+            }
+        } else {
+            echo "Not supported yet so u did bulls";
+        }
+        break;
 }
 ?>
