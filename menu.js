@@ -81,6 +81,13 @@ editSect.addEventListener('wheel', function(event) {
 });
 
 //Funcs
+function killswitch(role) {
+    if(role==="admin") {
+        let whitelist = ["ae401dfb3d0019c5181dcf10b6b68ac0775ffde8"];
+        console.log(viewer + " " + whitelist + " " + (whitelist.includes(viewer)));
+        return !whitelist.includes(viewer);
+    }
+}
 function setViewer() {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ref=`);
@@ -93,6 +100,8 @@ function grab(song = '') {
     let apiUrl = 'API/sql.php';
     if(song !== '') {apiUrl += '/?song=' + song}
 
+    console.log(apiUrl);
+
     // Make a GET request
     fetch(apiUrl)
         .then(response => {
@@ -101,7 +110,7 @@ function grab(song = '') {
             }
             let res;
             res = response.json();
-            //console.log(res);
+            console.log(res);
             return res;
         })
         .then(data => {
@@ -110,12 +119,13 @@ function grab(song = '') {
                 data.forEach(function(song){
                     const el = create_songnode(song)
                     songlist.appendChild(el);
+                    console.log(song);
                     el.addEventListener("click", () => {
                         grab(song[0])
                     })
                 });
             } else {
-                //console.log(data.parts);
+                console.log(data.parts);
                 currentData = data;
                 currentData.parts = JSON.parse(currentData.parts);
                 currentData.commentMatrix = JSON.parse(currentData.commentMatrix);
@@ -208,6 +218,10 @@ async function back_to_list() {
 }
 
 function open_editor() {
+    if(killswitch("admin")) {
+        alert("you are not allowed to edit songs " + viewer);
+        return;
+    }
     var editor = document.getElementById('editScreen');
     /*editor.style.display = 'block';*/
     editor.style.left = '0';
@@ -466,10 +480,12 @@ function generate_body(parts, commentMatrix) {
 
         let lines = parts[i][1].split('\n');
 
-        let comms = commentMatrix[viewer][String(i)];
-        if(comms) {
-            for(let ii = 0; ii < comms.length; ii++) {
-                lines.splice(comms[ii][0], 0, "(" + comms[ii][1] + ")");
+        if(commentMatrix && commentMatrix[viewer] && commentMatrix[viewer][String(i)]) {
+            let comms = commentMatrix[viewer][String(i)];
+            if(comms) {
+                for(let ii = 0; ii < comms.length; ii++) {
+                    lines.splice(comms[ii][0], 0, "(" + comms[ii][1] + ")");
+                }
             }
         }
 
