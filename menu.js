@@ -60,6 +60,7 @@ scaleinput.addEventListener('input', zoom);
 document.getElementById("cbscrbut").addEventListener('click', autoscroll);
 scrollinput.addEventListener('input', update_VA_speed);
 document.getElementById("editbut").addEventListener("click", open_editor);
+document.getElementById("new_song_but").addEventListener("click", open_editor);
 
 //guesture control
 scrollSect.addEventListener('wheel', function(event) {
@@ -81,11 +82,10 @@ editSect.addEventListener('wheel', function(event) {
 });
 
 //Funcs
-function killswitch(role) {
+async function killswitch(role) {
     if(role==="admin") {
-        let whitelist = ["ae401dfb3d0019c5181dcf10b6b68ac0775ffde8"];
-        console.log(viewer + " " + whitelist + " " + (whitelist.includes(viewer)));
-        return !whitelist.includes(viewer);
+        //TODO: Server killing client
+        return false;
     }
 }
 function setViewer() {
@@ -116,6 +116,7 @@ function grab(song = '') {
         .then(data => {
             if(song === '') {
                 data.sort();
+                songlist.innerHTML = "";
                 data.forEach(function(song){
                     const el = create_songnode(song)
                     songlist.appendChild(el);
@@ -218,10 +219,7 @@ async function back_to_list() {
 }
 
 function open_editor() {
-    if(killswitch("admin")) {
-        alert("you are not allowed to edit songs " + viewer);
-        return;
-    }
+    killswitch("admin");
     var editor = document.getElementById('editScreen');
     /*editor.style.display = 'block';*/
     editor.style.left = '0';
@@ -246,12 +244,37 @@ function open_editor() {
         document.getElementById('ekey').value = 0;
         document.getElementById('ekeyshift').value = 0;
         document.getElementById('ecapo').value = 0;
-        //maybe TODO: set current_Data
+        let ebody = document.getElementById('ebody');
+        ebody.innerHTML = `<div class="epart" data-id="0">                   
+                                <div class="hstack">
+                                    <div class="vstack buttonvstack">
+                                        <div class="chordbutton moveup" data-id="0">
+                                            <div class="cbcon">^</div>
+                                        </div>
+                                        <div class="chordbutton movegone" data-id="0">
+                                            <div class="cbcon">X</div>
+                                        </div>
+                                        <div class="chordbutton movedown" data-id="0">
+                                            <div class="cbcon">v</div>
+                                        </div>
+                                    </div>
+                                    <div class="vstack textvstack">                           
+                                        <div class="ebptitle" contenteditable="true"></div>
+                                        <div class="ebpcontent" contenteditable="true"></div>
+                                    </div>                   
+                                </div>
+                            </div>`;
+        let moveup = ebody.querySelector('.moveup');
+        let movegone = ebody.querySelector('.movegone');
+        let movedown = ebody.querySelector('.movedown');
+        moveup.addEventListener('click', () => nodeswitch(parseInt(moveup.dataset.id)));
+        movegone.addEventListener('click', () => rem_epart(parseInt(movegone.dataset.id)));
+        movedown.addEventListener('click', () => nodeswitch(parseInt(movedown.dataset.id) + 1));
+        editor_len = 1;
     }
     document.getElementById("savebut").addEventListener("click", save_song);
     document.getElementById("discardbut").addEventListener("click", discard_song);
     document.getElementById("extendbut").addEventListener("click", add_epart);
-    console.log("add_epart event listener set");
 }
 
 function generate_editor_body() {
@@ -287,13 +310,13 @@ function generate_editor_body() {
 
     document.querySelectorAll('.moveup').forEach(function(moveup) {
         moveup.addEventListener('click', () => nodeswitch(parseInt(moveup.dataset.id)));
-    })
+    });
     document.querySelectorAll('.movegone').forEach(function(movegone) {
         movegone.addEventListener('click', () => rem_epart(parseInt(movegone.dataset.id)));
-    })
+    });
     document.querySelectorAll('.movedown').forEach(function(movedown) {
         movedown.addEventListener('click', () => nodeswitch(parseInt(movedown.dataset.id) + 1));
-    })
+    });
 }
 
 function nodeswitch(id) {
@@ -393,6 +416,8 @@ async function save_song() {
         let parttuple = [];
         let texts = document.querySelector(`.epart[data-id="${i}"] .hstack .textvstack`);
 
+        console.log(texts);
+
         const ptitle = texts.querySelector('.ebptitle').textContent;
         const pcontent = texts.querySelector('.ebpcontent').innerHTML
             .replaceAll("</div><div>", "\n")
@@ -409,19 +434,18 @@ async function save_song() {
     }
 
     //file in the vars, TODO: Deepsearch
+    data.name = document.querySelector('#etitle').value;
+    data.altt = document.querySelector('#ealtt').value;
+    data.auth = document.querySelector('#eauth').value;
+    data.key = document.querySelector('#ekey').value;
+    data.keyshift = document.querySelector('#ekeyshift').value;
+    data.capo = document.querySelector('#ecapo').value;
+    data.parts = JSON.stringify(parts);
     if(current_window === "edit") {
         data.action = "edit";
-        data.name = document.querySelector('#etitle').value;
-        data.altt = document.querySelector('#ealtt').value;
-        data.auth = document.querySelector('#eauth').value;
-        data.key = document.querySelector('#ekey').value;
-        data.keyshift = document.querySelector('#ekeyshift').value;
-        data.capo = document.querySelector('#ecapo').value;
-        data.parts = JSON.stringify(parts);
         data.id = currentData["Id"];
     } else if(current_window === "add") {
         data.action = "add";
-        alert("Dunno how u got here but that doesnt work!");
     }
 
     //console.log(data);
@@ -447,7 +471,9 @@ async function save_song() {
     }
 
     grab(data.name)
+    if(current_window === "add") {grab();}
     document.getElementById('editScreen').style.left = '100vw';
+    current_window = "chords";
 }
 
 function discard_song() {

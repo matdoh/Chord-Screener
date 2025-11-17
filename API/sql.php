@@ -58,7 +58,16 @@ switch ($methode) {
                 die("SQL error: " . $con->error);
             }
         } else {
-            echo "Not supported yet so u did bulls";
+            $addsql = $con->prepare("INSERT INTO `songs` (`Capo`, `Chords`, `Copyright`, `Deepsearch`, `Deleted`, `Duration`, `Duration2`, `HasChildren`, `Id`, `KeyShift`, `LinkedAudio`, `ModifiedDateTime`, `NotesText`, `ParentId`, `SectionOrder`, `SongNumber`, `SyncId`, `TempoInt`, `Url`, `Zoom`, `ZoomFactor`, `author`, `content`, `drawingPathsBackup`, `hash`, `key`, `locked`, `midiOnLoad`, `name`, `subTitle`, `timeSig`, `type`, `vName`, `_displayParams`, `_folders`, `_tags`, `parts`, `commentMatrix`) VALUES (?, NULL, ?, ?, '0', '0', '0', '0', NULL, ?, NULL, current_timestamp(), '', '0', '', NULL, '', '0', '', '1', '1', ?, '', NULL, '', ?, '0', NULL, ?, ?, '', '1', NULL, '{}', '[]', '[]', ?, ?);");
+            if ($addsql) {
+                $copyright = ""; $deepsearch = ""; $commentmatrix = '{"0":{"0":[[0, "default comment"]],"2":[[0, "wie immer break auf A"]]}}';
+                $addsql->bind_param("issisissss", $data["capo"], $copyright, $deepsearch, $data["keyshift"], $data["auth"], $data["key"], $data["name"], $data["altt"], $data["parts"], $commentmatrix);
+                if ($addsql->execute()) {
+                    echo "oki u good";
+                } else {
+                    echo "There was a meowstake: " . $addsql->error;
+                }
+            }
         }
         break;
 }

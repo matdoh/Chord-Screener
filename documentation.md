@@ -29,11 +29,12 @@ $_SESSION["db"] = true;
 Italic rows are currently not used
 <h3>songs</h3>
 <table>
-<th>name</th><th>type</th><th>description</th>
+<th>name</th><th>type</th><th>description</th><th>editor range</th>
 <tr>
     <td>Capo</td>
     <td>Int(4)</td>
     <td>Capo position</td>
+    <td>i</td>
 </tr>
 <tr class="tilted">
     <td>Chords</td>
@@ -44,11 +45,13 @@ Italic rows are currently not used
     <td>Copyright</td>
     <td>Varchar(256)</td>
     <td>a copyright hint at the end of a song, currently not displayed.</td>
+    <td>s: dummy in add, not in edit</td>
 </tr>
 <tr>
     <td>Deepsearch</td>
     <td>Varchar(256)</td>
     <td>String of keywords for a search-function</td>
+    <td>s: dummy in add, not in edit</td>
 </tr>
 <tr class="tilted">
     <td>Deleted</td>
@@ -74,11 +77,13 @@ Italic rows are currently not used
     <td>Id</td>
     <td>Int(255)</td>
     <td>...</td>
+    <td>i: in edit, a_i in add</td>
 </tr>
 <tr>
     <td>KeyShift</td>
     <td>Int(4)</td>
     <td>The set key (not the Original Key)</td>
+    <td>i</td>
 </tr>
 <tr class="tilted">
     <td>LinkedAudio</td>
@@ -139,6 +144,7 @@ Italic rows are currently not used
     <td>author</td>
     <td>Varchar(128)</td>
     <td>...</td>
+    <td>s</td>
 </tr>
 <tr class="outdated">
     <td>content</td>
@@ -159,6 +165,7 @@ Italic rows are currently not used
     <td>key</td>
     <td>Int(4)</td>
     <td>...</td>
+    <td>i</td>
 </tr>
 <tr class="tilted">
     <td>locked</td>
@@ -174,11 +181,13 @@ Italic rows are currently not used
     <td>name</td>
     <td>Varchar(128)</td>
     <td>...</td>
+    <td>s</td>
 </tr>
 <tr>
     <td>subTitle</td>
     <td>Varchar(128)</td>
     <td>...</td>
+    <td>s</td>
 </tr>
 <tr class="tilted">
     <td>timeSig</td>
@@ -214,11 +223,13 @@ Italic rows are currently not used
     <td>parts</td>
     <td>Varchar(8192)</td>
     <td>array(array(header, content))</td>
+    <td>s</td>
 </tr>
 <tr class="new">
     <td>commentMatrix</td>
     <td>Varchar(1023)</td>
     <td>dict(author, dict(part, array(array(line, content))))</td>
+    <td>s: dummycomment in add, will got its own editor</td>
 </tr>
 </table>
 <h3>users</h3>

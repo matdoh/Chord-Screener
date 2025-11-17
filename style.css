@@ -108,6 +108,9 @@ body {
     margin: 0;
     font-family: 'Raleway', sans-serif;
 }
+#listbutbar {
+    margin-bottom: 3vh;
+}
 
 /*CHORD-SCREEN: GENERAL*/
 #chordScreen {
