@@ -431,7 +431,7 @@ input[type="number"] {
 }
 
 .buttonvstack {
-    height: calc(var(--cb-size) * 2 + 9vh);
+    height: calc(var(--cb-size) * 3 + 12vh); /* #buttons + 3vh*(#buttons+1)*/
 }
 
 .textvstack {

@@ -254,6 +254,9 @@ function generate_editor_body() {
                                         <div class="chordbutton moveup" data-id="${i}">
                                             <div class="cbcon">^</div>
                                         </div>
+                                        <div class="chordbutton movegone" data-id="${i}">
+                                            <div class="cbcon">X</div>
+                                        </div>
                                         <div class="chordbutton movedown" data-id="${i}">
                                             <div class="cbcon">v</div>
                                         </div>
@@ -270,6 +273,9 @@ function generate_editor_body() {
 
     document.querySelectorAll('.moveup').forEach(function(moveup) {
         moveup.addEventListener('click', () => nodeswitch(parseInt(moveup.dataset.id)));
+    })
+    document.querySelectorAll('.movegone').forEach(function(movegone) {
+        movegone.addEventListener('click', () => rem_epart(parseInt(movegone.dataset.id)));
     })
     document.querySelectorAll('.movedown').forEach(function(movedown) {
         movedown.addEventListener('click', () => nodeswitch(parseInt(movedown.dataset.id) + 1));
@@ -291,9 +297,11 @@ function nodeswitch(id) {
     oldfirst.dataset.id = id;
     oldfirst.querySelector('.moveup').dataset.id = id;
     oldfirst.querySelector('.movedown').dataset.id = id;
+    oldfirst.querySelector('.movegone').dataset.id = id;
     newfirst.dataset.id = id-1;
     newfirst.querySelector('.moveup').dataset.id = id-1;
     newfirst.querySelector('.movedown').dataset.id = id-1;
+    newfirst.querySelector('.movegone').dataset.id = id-1;
 
     //TODO: comment matrix
 }
@@ -308,6 +316,9 @@ function add_epart() {
                                         <div class="chordbutton moveup" data-id="${new_id}">
                                             <div class="cbcon">^</div>
                                         </div>
+                                        <div class="chordbutton movegone" data-id="${new_id}">
+                                            <div class="cbcon">X</div>
+                                        </div>
                                         <div class="chordbutton movedown" data-id="${new_id}">
                                             <div class="cbcon">v</div>
                                         </div>
@@ -319,10 +330,33 @@ function add_epart() {
                                 </div>`;
     document.getElementById('ebody').appendChild(new_epart);
     let moveup = new_epart.querySelector('.moveup');
+    let movegone = new_epart.querySelector('.movegone');
     let movedown = new_epart.querySelector('.movedown');
     moveup.addEventListener('click', () => nodeswitch(parseInt(moveup.dataset.id)));
+    movegone.addEventListener('click', () => rem_epart(parseInt(movegone.dataset.id)));
     movedown.addEventListener('click', () => nodeswitch(parseInt(movedown.dataset.id) + 1));
     editor_len++;
+}
+
+function rem_epart(id) {
+    console.log("now removing element with id " + id);
+    for (const epart of document.querySelectorAll('.epart')) {
+        if (parseInt(epart.dataset.id) < id) {
+            console.log(`skipping element with id ${epart.dataset.id} (waiting for ${id})`);
+            continue; // skip to next iteration
+        } else if(parseInt(epart.dataset.id) === id) {
+            console.log(`killing element with id ${epart.dataset.id}`);
+            epart.remove();
+            console.log(`killed element with id ${epart.dataset.id}`);
+        } else {
+            console.log(`decreasing id of element with id ${epart.dataset.id}`);
+            let new_id = parseInt(epart.dataset.id)-1;
+            epart.setAttribute("data-id", new_id);
+            [epart.querySelector('.moveup'), epart.querySelector('.movedown'), epart.querySelector('.movegone')].forEach(fn => {
+                fn.setAttribute("data-id", new_id);
+            });
+        }
+    }
 }
 
 function prepare_textarea(text) {
