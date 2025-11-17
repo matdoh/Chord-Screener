@@ -275,6 +275,7 @@ function open_editor() {
     document.getElementById("savebut").addEventListener("click", save_song);
     document.getElementById("discardbut").addEventListener("click", discard_song);
     document.getElementById("extendbut").addEventListener("click", add_epart);
+    document.getElementById("deletebut").addEventListener("click", remove_song);
 }
 
 function generate_editor_body() {
@@ -474,6 +475,34 @@ async function save_song() {
     if(current_window === "add") {grab();}
     document.getElementById('editScreen').style.left = '100vw';
     current_window = "chords";
+}
+
+async function remove_song() {
+    let apiUrl = 'API/sql.php';
+    let data = {}
+    data.action = "delete";
+    data.id = currentData["Id"];
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",  // tell server it's JSON
+            },
+            body: JSON.stringify(data),            // convert JS object to JSON
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        console.log(await response.text());
+    } catch (error) {
+        console.error("POST request failed:", error);
+    }
+
+    grab();
+    document.getElementById('editScreen').style.left = '100vw';
+    back_to_list();
 }
 
 function discard_song() {

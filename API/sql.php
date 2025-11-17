@@ -22,7 +22,7 @@ switch ($methode) {
             case NULL: echo '404: You are looking for something that isn\'t here.'; break;
             case "list": // Verzeichnis auflisten
                 $songlist = [];
-                $sql=$con->prepare("SELECT `Deepsearch`, `Id`, `author`, `name` FROM songs");
+                $sql=$con->prepare("SELECT `Deepsearch`, `Id`, `author`, `name` FROM songs WHERE `Deleted` <= 0");
                 $sql->execute();
                 $sql->bind_result($deepsearch, $id, $author, $name);
                 while($sql->fetch()) {
@@ -57,7 +57,7 @@ switch ($methode) {
             } else {
                 die("SQL error: " . $con->error);
             }
-        } else {
+        } else if ($data["action"] == "add") {
             $addsql = $con->prepare("INSERT INTO `songs` (`Capo`, `Chords`, `Copyright`, `Deepsearch`, `Deleted`, `Duration`, `Duration2`, `HasChildren`, `Id`, `KeyShift`, `LinkedAudio`, `ModifiedDateTime`, `NotesText`, `ParentId`, `SectionOrder`, `SongNumber`, `SyncId`, `TempoInt`, `Url`, `Zoom`, `ZoomFactor`, `author`, `content`, `drawingPathsBackup`, `hash`, `key`, `locked`, `midiOnLoad`, `name`, `subTitle`, `timeSig`, `type`, `vName`, `_displayParams`, `_folders`, `_tags`, `parts`, `commentMatrix`) VALUES (?, NULL, ?, ?, '0', '0', '0', '0', NULL, ?, NULL, current_timestamp(), '', '0', '', NULL, '', '0', '', '1', '1', ?, '', NULL, '', ?, '0', NULL, ?, ?, '', '1', NULL, '{}', '[]', '[]', ?, ?);");
             if ($addsql) {
                 $copyright = ""; $deepsearch = ""; $commentmatrix = '{"0":{"0":[[0, "default comment"]],"2":[[0, "wie immer break auf A"]]}}';
@@ -67,6 +67,18 @@ switch ($methode) {
                 } else {
                     echo "There was a meowstake: " . $addsql->error;
                 }
+            }
+        } else if ($data["action"] == "delete") {
+            $editsql = $con->prepare("UPDATE `songs` SET `Deleted` = 1 WHERE `songs`.`Id` = ?;");
+            if ($editsql) {
+                $editsql->bind_param("i", $data["id"]);
+                if ($editsql->execute()) {
+                    echo "oki u good";
+                } else {
+                    echo "There was a meowstake: " . $editsql->error;
+                }
+            } else {
+                die("SQL error: " . $con->error);
             }
         }
         break;
