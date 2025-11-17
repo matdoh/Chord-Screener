@@ -100,8 +100,6 @@ function grab(song = '') {
     let apiUrl = 'API/sql.php';
     if(song !== '') {apiUrl += '/?song=' + song}
 
-    console.log(apiUrl);
-
     // Make a GET request
     fetch(apiUrl)
         .then(response => {
@@ -110,7 +108,7 @@ function grab(song = '') {
             }
             let res;
             res = response.json();
-            console.log(res);
+            //console.log(res);
             return res;
         })
         .then(data => {
@@ -120,13 +118,13 @@ function grab(song = '') {
                 data.forEach(function(song){
                     const el = create_songnode(song)
                     songlist.appendChild(el);
-                    console.log(song);
+                    //console.log(song);
                     el.addEventListener("click", () => {
                         grab(song[0])
                     })
                 });
             } else {
-                console.log(data.parts);
+                //console.log(data.parts);
                 currentData = data;
                 currentData.parts = JSON.parse(currentData.parts);
                 currentData.commentMatrix = JSON.parse(currentData.commentMatrix);
@@ -221,7 +219,6 @@ async function back_to_list() {
 function open_editor() {
     killswitch("admin");
     var editor = document.getElementById('editScreen');
-    /*editor.style.display = 'block';*/
     editor.style.left = '0';
 
     if(current_window === "chords") {
@@ -340,8 +337,6 @@ function nodeswitch(id) {
     newfirst.querySelector('.moveup').dataset.id = id-1;
     newfirst.querySelector('.movedown').dataset.id = id-1;
     newfirst.querySelector('.movegone').dataset.id = id-1;
-
-    //TODO: comment matrix
 }
 
 function add_epart() {
@@ -377,17 +372,11 @@ function add_epart() {
 }
 
 function rem_epart(id) {
-    console.log("now removing element with id " + id);
     for (const epart of document.querySelectorAll('.epart')) {
         if (parseInt(epart.dataset.id) < id) {
-            console.log(`skipping element with id ${epart.dataset.id} (waiting for ${id})`);
-            continue; // skip to next iteration
         } else if(parseInt(epart.dataset.id) === id) {
-            console.log(`killing element with id ${epart.dataset.id}`);
             epart.remove();
-            console.log(`killed element with id ${epart.dataset.id}`);
         } else {
-            console.log(`decreasing id of element with id ${epart.dataset.id}`);
             let new_id = parseInt(epart.dataset.id)-1;
             epart.setAttribute("data-id", new_id);
             [epart.querySelector('.moveup'), epart.querySelector('.movedown'), epart.querySelector('.movegone')].forEach(fn => {
@@ -417,7 +406,7 @@ async function save_song() {
         let parttuple = [];
         let texts = document.querySelector(`.epart[data-id="${i}"] .hstack .textvstack`);
 
-        console.log(texts);
+        //console.log(texts);
 
         const ptitle = texts.querySelector('.ebptitle').textContent;
         const pcontent = texts.querySelector('.ebpcontent').innerHTML
@@ -434,7 +423,7 @@ async function save_song() {
         }
     }
 
-    //file in the vars, TODO: Deepsearch
+    //file in the vars
     data.name = document.querySelector('#etitle').value;
     data.altt = document.querySelector('#ealtt').value;
     data.auth = document.querySelector('#eauth').value;
@@ -462,11 +451,11 @@ async function save_song() {
             body: JSON.stringify(data),            // convert JS object to JSON
         });
 
-        if (!response.ok) {
+        /*if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        }*/
 
-        console.log(await response.text());
+        //console.log(await response.text());
     } catch (error) {
         console.error("POST request failed:", error);
     }
@@ -491,11 +480,11 @@ async function remove_song() {
             body: JSON.stringify(data),            // convert JS object to JSON
         });
 
-        if (!response.ok) {
+        /*if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        }*/
 
-        console.log(await response.text());
+        //console.log(await response.text());
     } catch (error) {
         console.error("POST request failed:", error);
     }
@@ -608,7 +597,7 @@ function generate_body(parts, commentMatrix) {
                     tline.className = "tline";
                     const tlinet = document.createElement('p');
                     tlinet.className = 'tab';
-                    tlinet.textContent = line/*.substring(1, line.length - 1)*/;
+                    tlinet.textContent = line;
                     tline.appendChild(tlinet);
                     ppart.appendChild(tline);
                     return;
@@ -641,7 +630,6 @@ function generate_body(parts, commentMatrix) {
             for(let ii = 0; ii < struc_array.length; ii+=2) {
                 if(ii === 0 && struc_array[0] === '') {continue;}
                 const block = document.createElement('div');
-                /*TODO: Check for space at the end of even el*/
                 if (struc_array[ii].charAt(struc_array[ii].length - 1) === ' ') {
                     block.className = "microblock spacebehind";
                 } else {
@@ -674,13 +662,11 @@ function generate_body(parts, commentMatrix) {
 }
 
 function partseperator(content, startv='{c: ', endv ='}') {
+    /*content: the haystack | startv: opening Title Tag | endv: closing Title Tag //
+    * returns an Array of all titles on even indices and content on odd ones //
+    * example: partseperator("[A]Here [G]Goes", "[", "]") => ["A", "Here ", "G", "Goes"]*/
     let backarr = [];
     let f_ed_arr = content.split(startv);
-    /*if(f_ed_arr[0] === content) {
-        backarr.push('');
-        backarr.push(f_ed_arr[0]);
-        return backarr;
-    }*/
     let hastitle = content.startsWith(startv);
     f_ed_arr.forEach(function(e) {
         let secttitle = "";
@@ -811,13 +797,11 @@ function set_palette(value) {
 }
 
 async function fullscreen() {
-    console.log('before fullscreen(): ', full);
     if (full) {
         closeFullscreen();
     } else {
         openFullscreen();
     }
-    console.log('after fullscreen(): ', full);
 }
 
 function openFullscreen() {
@@ -832,7 +816,6 @@ function openFullscreen() {
 }
 
 function closeFullscreen() {
-    console.log('here1');
     const elem = document/*.documentElement*/;
     if (elem.exitFullscreen) {
         elem.exitFullscreen();
@@ -889,47 +872,7 @@ async function update_VA_speed() {
     init_autoscroll();
 }
 
-//TODO:
-function startAutoScroll(element, pixelsPerSecond) {
-    let lastTimestamp = 0; // Keep track of the last timestamp for smooth animation
-    let accumulatedDistance = 0; // Accumulates fractional scroll distances
-
-    function smoothScroll(timestamp) {
-        if (lastTimestamp) {
-            // Calculate time elapsed between frames in seconds
-            const elapsed = (timestamp - lastTimestamp) / 1000;
-
-            // Calculate how many pixels to scroll this frame
-            accumulatedDistance += pixelsPerSecond * elapsed;
-
-            // Scroll only full pixels and accumulate fractional scroll values
-            const scrollAmount = Math.floor(accumulatedDistance);
-            if (scrollAmount > 0) {
-                element.scrollTop += scrollAmount;
-                accumulatedDistance -= scrollAmount; // Subtract scrolled distance from accumulator
-            }
-        }
-
-        lastTimestamp = timestamp;
-
-        let stopper = false;
-        // Abbruchbedingungen
-        if (element.scrollTop >= element.scrollHeight - element.clientHeight) {
-            stopper = true;
-        }
-        if (!autoscrollvar) {
-            stopper = true;
-        }
-
-        if (!stopper) {
-            requestAnimationFrame(smoothScroll);
-        } // Continue scrolling
-    }
-
-    // Start the scrolling animation
-    requestAnimationFrame(smoothScroll);
-}
-
+/*
 ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange"].forEach(
     eventType => document.addEventListener(eventType, async function () {
         if (full) {
@@ -947,4 +890,4 @@ function startAutoScroll(element, pixelsPerSecond) {
             console.log("opened")
         }
     }, false)
-);
+);*/

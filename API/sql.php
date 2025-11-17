@@ -19,7 +19,6 @@ switch ($methode) {
             $wanted = "list";
         }
         switch ($wanted) {
-            case NULL: echo '404: You are looking for something that isn\'t here.'; break;
             case "list": // Verzeichnis auflisten
                 $songlist = [];
                 $sql=$con->prepare("SELECT `Deepsearch`, `Id`, `author`, `name` FROM songs WHERE `Deleted` <= 0");
@@ -83,4 +82,3 @@ switch ($methode) {
         }
         break;
 }
-?>
