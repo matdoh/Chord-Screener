@@ -236,6 +236,8 @@ function open_editor() {
     }
     document.getElementById("savebut").addEventListener("click", save_song);
     document.getElementById("discardbut").addEventListener("click", discard_song);
+    document.getElementById("extendbut").addEventListener("click", add_epart);
+    console.log("add_epart event listener set");
 }
 
 function generate_editor_body() {
@@ -275,6 +277,7 @@ function generate_editor_body() {
 }
 
 function nodeswitch(id) {
+    /* id = id of the new first el: nodeswitch(1) switches the 0 and the 1 el */
     //filter invalid cases
     if(id===0) {console.log("cannot move first up"); return;}
     if(id===editor_len) {console.log("cannot move last down"); return;}
@@ -293,6 +296,33 @@ function nodeswitch(id) {
     newfirst.querySelector('.movedown').dataset.id = id-1;
 
     //TODO: comment matrix
+}
+
+function add_epart() {
+    const new_epart = document.createElement('div');
+    const new_id = document.querySelectorAll(".epart").length;
+    new_epart.classList.add('epart');
+    new_epart.setAttribute("data-id", String(new_id));
+    new_epart.innerHTML = `<div class="hstack">
+                                    <div class="vstack buttonvstack">
+                                        <div class="chordbutton moveup" data-id="${new_id}">
+                                            <div class="cbcon">^</div>
+                                        </div>
+                                        <div class="chordbutton movedown" data-id="${new_id}">
+                                            <div class="cbcon">v</div>
+                                        </div>
+                                    </div>
+                                    <div class="vstack textvstack">                           
+                                        <div class="ebptitle" contenteditable="true"></div>
+                                        <div class="ebpcontent" contenteditable="true"></div>
+                                    </div>                   
+                                </div>`;
+    document.getElementById('ebody').appendChild(new_epart);
+    let moveup = new_epart.querySelector('.moveup');
+    let movedown = new_epart.querySelector('.movedown');
+    moveup.addEventListener('click', () => nodeswitch(parseInt(moveup.dataset.id)));
+    movedown.addEventListener('click', () => nodeswitch(parseInt(movedown.dataset.id) + 1));
+    editor_len++;
 }
 
 function prepare_textarea(text) {
@@ -315,13 +345,19 @@ async function save_song() {
         let parttuple = [];
         let texts = document.querySelector(`.epart[data-id="${i}"] .hstack .textvstack`);
 
-        parttuple.push(texts.querySelector('.ebptitle').textContent);
-        parttuple.push(texts.querySelector('.ebpcontent').innerHTML
+        const ptitle = texts.querySelector('.ebptitle').textContent;
+        const pcontent = texts.querySelector('.ebpcontent').innerHTML
             .replaceAll("</div><div>", "\n")
             .replace("<div>", "")
-            .replace("</div>", ""));
+            .replace("</div>", "")
 
-        parts.push(parttuple);
+
+        parttuple.push(ptitle);
+        parttuple.push(pcontent);
+
+        if(ptitle && pcontent) {
+            parts.push(parttuple);
+        }
     }
 
     //file in the vars, TODO: Deepsearch
