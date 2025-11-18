@@ -422,15 +422,26 @@ async function save_song() {
             parts.push(parttuple);
         }
     }
+    //create deepsearch string
+    const etitle = document.querySelector('#etitle').value;
+    const ealtt = document.querySelector('#ealtt').value;
+    const eauth = document.querySelector('#eauth').value;
+    const verselines = (parts.find(d => ["Verse", "Verse 1", "Strophe", "Strophe 1"].includes(d[0])) || ["", ""])[1].slice(0, 40);
+    const choruslines = (parts.find(d => ["Chorus", "Refrain"].includes(d[0])) || ["", ""])[1].slice(0, 40);
+    let deepsearch = etitle + "\n" + ealtt + "\n" + eauth + "\n" + verselines + "\n" + choruslines;
+    deepsearch = deepsearch.toLowerCase()
+        .replaceAll('ü', 'u').replaceAll('ä', 'a').replaceAll('ö', 'o').replaceAll('ß', 's')
+        .replace(new RegExp("\\[.*?\\]", "g"), "");
 
     //file in the vars
-    data.name = document.querySelector('#etitle').value;
-    data.altt = document.querySelector('#ealtt').value;
-    data.auth = document.querySelector('#eauth').value;
+    data.name = etitle;
+    data.altt = ealtt;
+    data.auth = eauth
     data.key = document.querySelector('#ekey').value;
     data.keyshift = document.querySelector('#ekeyshift').value;
     data.capo = document.querySelector('#ecapo').value;
     data.parts = JSON.stringify(parts);
+    data.deepsearch = deepsearch;
     if(current_window === "edit") {
         data.action = "edit";
         data.id = currentData["Id"];
