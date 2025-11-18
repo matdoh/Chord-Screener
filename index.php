@@ -43,5 +43,6 @@
         header("Location: denied.html");
     } else {
         readfile("screen.html");
+        echo '<script type="module" src="menu.js"></script>';
     }
 ?>
