@@ -228,6 +228,7 @@ function open_editor() {
         document.getElementById('eauth').value = currentData.author;
         document.getElementById('etitle').value = currentData.name;
         document.getElementById('ealtt').value = currentData.subTitle;
+        document.getElementById('ecopyr').value = currentData.Copyright;
         document.getElementById('ekey').value = currentData.key;
         document.getElementById('ekeyshift').value = currentData.KeyShift;
         document.getElementById('ecapo').value = currentData.Capo;
@@ -238,6 +239,7 @@ function open_editor() {
         document.getElementById('eauth').value = '';
         document.getElementById('etitle').value = '';
         document.getElementById('ealtt').value = '';
+        document.getElementById('ecopyr').value = '';
         document.getElementById('ekey').value = 0;
         document.getElementById('ekeyshift').value = 0;
         document.getElementById('ecapo').value = 0;
@@ -426,6 +428,7 @@ async function save_song() {
     const etitle = document.querySelector('#etitle').value;
     const ealtt = document.querySelector('#ealtt').value;
     const eauth = document.querySelector('#eauth').value;
+    const ecopyr = document.querySelector('#ecopyr').value;
     const verselines = (parts.find(d => ["Verse", "Verse 1", "Strophe", "Strophe 1"].includes(d[0])) || ["", ""])[1].slice(0, 40);
     const choruslines = (parts.find(d => ["Chorus", "Refrain"].includes(d[0])) || ["", ""])[1].slice(0, 40);
     let deepsearch = etitle + "\n" + ealtt + "\n" + eauth + "\n" + verselines + "\n" + choruslines;
@@ -436,7 +439,8 @@ async function save_song() {
     //file in the vars
     data.name = etitle;
     data.altt = ealtt;
-    data.auth = eauth
+    data.auth = eauth;
+    data.copyr = ecopyr
     data.key = document.querySelector('#ekey').value;
     data.keyshift = document.querySelector('#ekeyshift').value;
     data.capo = document.querySelector('#ecapo').value;

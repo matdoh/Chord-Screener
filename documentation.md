@@ -41,7 +41,7 @@ Italic rows are currently not used
     <td>Int(1)</td>
     <td>no clue</td>
 </tr>
-<tr class="tilted">
+<tr>
     <td>Copyright</td>
     <td>Varchar(256)</td>
     <td>a copyright hint at the end of a song, currently not displayed.</td>

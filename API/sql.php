@@ -45,9 +45,9 @@ switch ($methode) {
         $data = json_decode($rawData, true);
 
         if ($data["action"] == "edit") {
-            $editsql = $con->prepare("UPDATE `songs` SET `name` = ?, `subTitle` = ?, `author` = ?, `key` = ?, `KeyShift` = ?, `Capo` = ?, `parts` = ?, `Deepsearch` = ? WHERE `songs`.`Id` = ?;");
+            $editsql = $con->prepare("UPDATE `songs` SET `name` = ?, `subTitle` = ?, `author` = ?, `key` = ?, `KeyShift` = ?, `Capo` = ?, `parts` = ?, `Deepsearch` = ?, `Copyright` = ? WHERE `songs`.`Id` = ?;");
             if ($editsql) {
-                $editsql->bind_param("sssiiissi", $data["name"], $data["altt"], $data["auth"], $data["key"], $data["keyshift"], $data["capo"], $data["parts"], $data["deepsearch"], $data["id"]);
+                $editsql->bind_param("sssiiisssi", $data["name"], $data["altt"], $data["auth"], $data["key"], $data["keyshift"], $data["capo"], $data["parts"], $data["deepsearch"], $data["copyr"], $data["id"]);
                 if ($editsql->execute()) {
                     echo "oki u good";
                 } else {
@@ -59,8 +59,8 @@ switch ($methode) {
         } else if ($data["action"] == "add") {
             $addsql = $con->prepare("INSERT INTO `songs` (`Capo`, `Chords`, `Copyright`, `Deepsearch`, `Deleted`, `Duration`, `Duration2`, `HasChildren`, `Id`, `KeyShift`, `LinkedAudio`, `ModifiedDateTime`, `NotesText`, `ParentId`, `SectionOrder`, `SongNumber`, `SyncId`, `TempoInt`, `Url`, `Zoom`, `ZoomFactor`, `author`, `content`, `drawingPathsBackup`, `hash`, `key`, `locked`, `midiOnLoad`, `name`, `subTitle`, `timeSig`, `type`, `vName`, `_displayParams`, `_folders`, `_tags`, `parts`, `commentMatrix`) VALUES (?, NULL, ?, ?, '0', '0', '0', '0', NULL, ?, NULL, current_timestamp(), '', '0', '', NULL, '', '0', '', '1', '1', ?, '', NULL, '', ?, '0', NULL, ?, ?, '', '1', NULL, '{}', '[]', '[]', ?, ?);");
             if ($addsql) {
-                $copyright = ""; $commentmatrix = '{"0":{"0":[[0, "default comment"]],"2":[[0, "wie immer break auf A"]]}}';
-                $addsql->bind_param("issisissss", $data["capo"], $copyright, $data["deepsearch"], $data["keyshift"], $data["auth"], $data["key"], $data["name"], $data["altt"], $data["parts"], $commentmatrix);
+                $commentmatrix = '{"0":{"0":[[0, "default comment"]],"2":[[0, "wie immer break auf A"]]}}';
+                $addsql->bind_param("issisissss", $data["capo"], $data["copyr"], $data["deepsearch"], $data["keyshift"], $data["auth"], $data["key"], $data["name"], $data["altt"], $data["parts"], $commentmatrix);
                 if ($addsql->execute()) {
                     echo "oki u good";
                 } else {
