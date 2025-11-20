@@ -21,9 +21,9 @@ $user = "some username";
 $pw = "some password";
 $db = "some database name";
 
-$_SESSION["con"] = new mysqli($servername, $user, $pw, $db);
-$_SESSION["con"]->set_charset("utf8");
-$_SESSION["db"] = true;
+global $con;
+$con = new mysqli($servername, $user, $pw, $db);
+$con->set_charset("utf8");
 ```
 <h2>Database Structure</h2>
 Italic rows are currently not used
@@ -254,6 +254,22 @@ Italic rows are currently not used
     <td>reference_key</td>
     <td>Varchar(127)</td>
     <td>Key used in visible code, to display comments etc.</td>
+</tr>
+<tr>
+    <td>roles</td>
+    <td>Varchar(12)</td>
+    <td>a rolestring where role is determined my index.
+    <br>[0]...Member
+    <br>[0]=1...See Songlist..."Previewer"
+    <br>[0]=2...Interact with Songlist..."Viewer"
+    <span class="tilted"><br>[0]=3...Write Comments..."Member"/"Commenter"</span>
+    <br>[1]...Editor
+    <br>[1]=1...Edit/Create/Delete Songs..."Editor"
+    <span class="tilted"><br>[1]=2...Restore deleted Songs
+    <br>[1]=3...Meddle with Comments
+    <br>[2]...Admin
+    <br>[2]=1...Add/Remove People from own Band..."Bandmanager"
+    <br>[2]=2...Add/Remove People from all Bands</span></td>
 </tr>
 </table>
 
