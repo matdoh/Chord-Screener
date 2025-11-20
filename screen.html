@@ -18,35 +18,40 @@
             <label><input type="text" id="searchv" name="searchv" placeholder="Suche nach einem Song"></label>
         </div>
         <div id="songlist"></div>
+        <div id="listbutbar">
+            <div id="new_song_but" class="chordbutton editor">
+                <div class="cbcon">++</div>
+            </div>
+        </div>
     </div>
     <div id="chordScreen">
         <div id="butbar">
-            <div id="backtolistbut" class="chordbutton" onclick="back_to_list()">
+            <div id="backtolistbut" class="chordbutton">
                 <div class="cbcon"><=</div>
             </div>
-            <div id="transupbut" class="chordbutton" onclick="transpose(1)">
+            <div id="transupbut" class="chordbutton">
                 <div class="cbcon">T+</div>
             </div>
-            <div id="transdownbut" class="chordbutton" onclick="transpose(11)">
+            <div id="transdownbut" class="chordbutton">
                 <div class="cbcon">T-</div>
             </div>
-            <div id="capoupbut" class="chordbutton" onclick="transpose(11, true)">
+            <div id="capoupbut" class="chordbutton">
                 <div class="cbcon">C+</div>
             </div>
-            <div id="capodownbut" class="chordbutton" onclick="transpose(1, true)">
+            <div id="capodownbut" class="chordbutton">
                 <div class="cbcon">C-</div>
             </div>
-            <div id="textmodebut" class="chordbutton" onclick="flip_textmode()">
+            <div id="textmodebut" class="chordbutton">
                 <div class="cbcon">Tx</div>
             </div>
-            <div id="fullscreenbut" class="chordbutton" onclick="fullscreen()">
+            <div id="fullscreenbut" class="chordbutton">
                 <div class="cbcon">&lt;&gt;</div>
             </div>
             <div id="darkmodebut" class="chordbutton extendable">
-                <div class="cbconbut" onclick="flip_darkmode()"></div>
+                <div class="cbconbut" id="cbcolbut"></div>
                 <div class="cbcon">co</div>
-                <div class="cbexa" onclick="set_palette('colors/palette-blue.css')">blue</div>
-                <div class="cbexa" onclick="set_palette('colors/palette-blackboard.css')">board</div>
+                <div class="cbexa" id="cbblue">blue</div>
+                <div class="cbexa" id="cbboard">board</div>
             </div>
             <div id="genzoombut" class="chordbutton extendable">
                 <div class="cbcon">Aa</div>
@@ -56,12 +61,15 @@
                 </div>
             </div>
             <div id="genscrollbut" class="chordbutton extendable">
-                <div class="cbconbut" onclick="autoscroll()"></div>
+                <div class="cbconbut" id="cbscrbut"></div>
                 <div class="cbcon">VA</div>
                 <div class="cbrangediv">
                     <input type="range" class="cbrange" name="zspeed" min="5" max="60" step="1" id="AVSpeedSlide" value="20">
                     <label for="AVSpeedSlide"></label>
                 </div>
+            </div>
+            <div id="editbut" class="chordbutton editor">
+                <div class="cbcon">ed</div>
             </div>
         </div>
         <div id="scrollingchords">
@@ -74,6 +82,50 @@
             </div>
         </div>
     </div>
+    <div id="editScreen">
+        <div id="editbutbar">
+            <div id="savebut" class="chordbutton">
+                <div class="cbcon">*s</div>
+            </div>
+            <div id="discardbut" class="chordbutton">
+                <div class="cbcon"><=</div>
+            </div>
+            <div id="extendbut" class="chordbutton">
+                <div class="cbcon">++</div>
+            </div>
+            <div id="deletebut" class="chordbutton">
+                <div class="cbcon">XX</div>
+            </div>
+        </div>
+        <div id="editor">
+            <div id="ehead">
+                <label><input type="text" id="etitle" placeholder="Songtitel"></label>
+                <label><input type="text" placeholder="Alternativtitel" id="ealtt"></label>
+                <label><input type="text" placeholder="Künstler" id="eauth"></label>
+                <label><input type="text" placeholder="Copyright-Hinweis" id="ecopyr"></label>
+                <label>Originaltonart: <input type="number" step="1" min="0" max="11" id="ekey"> (A=0,Bb=1,C=3,D=5,E=7,F=8,G=10)</label>
+                <label>Tonartenverschiebung: <input type="number" step="1" min="0" max="11" id="ekeyshift"></label>
+                <label>Capo: <input type="number" step="1" min="0" max="11" id="ecapo"></label>
+            </div>
+            <div id="ebody">
+                <div class="epart">
+                    <div class="hstack">
+                        <div class="vstack">
+                            <div class="chordbutton">
+                                <div class="cbcon">^</div>
+                            </div>
+                            <div class="chordbutton">
+                                <div class="cbcon">X</div>
+                            </div>
+                            <div class="chordbutton">
+                                <div class="cbcon">v</div>
+                            </div>
+                        </div>
+                        <label><textarea class="ebcontent"></textarea></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
-<script src="menu.js"></script>
 </html>

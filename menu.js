@@ -1,7 +1,11 @@
+//imports
+import {dynamic_text, sleep} from "./inc/utils.js";
+
 //Global Vars
 const dynamicsearch = document.getElementById('searchv');
 const scrollinput = document.getElementById('AVSpeedSlide');
 const scrollSect = document.getElementById('chordScreen')
+const editSect = document.getElementById('editScreen')
 const scaleinput = document.getElementById('ScaleIn');
 const songlist = document.getElementById('songlist');
 const Kreuzkey = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
@@ -20,6 +24,7 @@ const keyDict = [
     ["G", Kreuzkey],
     ["Ab", bKey]];
 const defscrollspeed = 30;
+var viewer = "";
 var displayedKey = null;
 var actualKey = null;
 var capopos = 0;
@@ -28,27 +33,91 @@ var currentData;
 var full = false;
 var autoscrollvar = false;
 var AVThresholdStamp = 0;
+var GuestureThresholdStamp = 0;
 var scrollspeed = 0;
+var current_window = "list"; // "chords", "edit", "add"
+var editor_len = 0;
+var editor_comments = {}
 
-//Initialize Site
+//INITIALIZE SITE
+//Start-functions
+setViewer();
 grab();
+removeUninteresting();
+search();
 dynamicsearch.addEventListener('input', search);
-scrollinput.addEventListener('input', update_VA_speed);
+//chordbarbuts
+document.getElementById("backtolistbut").addEventListener("click", back_to_list);
+document.getElementById("transupbut").addEventListener("click", () => transpose(1));
+document.getElementById("transdownbut").addEventListener("click", () => transpose(11));
+document.getElementById("capoupbut").addEventListener("click", () => transpose(11, true));
+document.getElementById("capodownbut").addEventListener("click", () => transpose(1, true));
+document.getElementById("textmodebut").addEventListener("click", flip_textmode);
+document.getElementById("fullscreenbut").addEventListener("click", fullscreen);
+document.getElementById("cbcolbut").addEventListener("click", flip_darkmode);
+document.getElementById("cbblue").addEventListener("click", () => set_palette('colors/palette-blue.css'));
+document.getElementById("cbboard").addEventListener("click", () => set_palette('colors/palette-blackboard.css'));
 scaleinput.addEventListener('input', zoom);
+document.getElementById("cbscrbut").addEventListener('click', autoscroll);
+scrollinput.addEventListener('input', update_VA_speed);
+document.getElementById("editbut").addEventListener("click", open_editor);
+document.getElementById("new_song_but").addEventListener("click", open_editor);
+
+//guesture control
 scrollSect.addEventListener('wheel', function(event) {
     if (event.deltaX < 0) {
         event.preventDefault();
-        if (event.deltaX < -50) {
+        if (event.deltaX < -50 && Date.now() - 1000 > GuestureThresholdStamp) {
             back_to_list();
         }
     }
 });
-search();
+editSect.addEventListener('wheel', function(event) {
+    if (event.deltaX < 0) {
+        event.preventDefault();
+        if (event.deltaX < -50) {
+            discard_song();
+            GuestureThresholdStamp = Date.now()
+        }
+    }
+});
 
 //Funcs
+async function removeUninteresting() {
+    let roledata = [0,0,0];
+    fetch('API/sql.php?roles=true')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            let res;
+            res = response.json();
+            console.log(res);
+            return res;
+        })
+        .then(data => {
+            roledata = data;
+            console.log(roledata);
+
+            document.querySelectorAll(".editor").forEach(button => {
+                if(parseInt(data[1]) < 1) {button.setAttribute("style", "display:none;");}
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function setViewer() {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ref=`);
+    if (parts.length >= 2) {
+        viewer = parts.pop().split(';').shift();
+    }
+}
 function grab(song = '') {
     // Define the API URL
-    let apiUrl = 'API/songbook.php';
+    let apiUrl = 'API/sql.php';
     if(song !== '') {apiUrl += '/?song=' + song}
 
     // Make a GET request
@@ -65,12 +134,20 @@ function grab(song = '') {
         .then(data => {
             if(song === '') {
                 data.sort();
+                songlist.innerHTML = "";
                 data.forEach(function(song){
-                    songlist.appendChild(create_songnode(song));
+                    const el = create_songnode(song)
+                    songlist.appendChild(el);
+                    //console.log(song);
+                    el.addEventListener("click", () => {
+                        grab(song[0])
+                    })
                 });
             } else {
-                console.log(data);
+                //console.log(data.parts);
                 currentData = data;
+                currentData.parts = JSON.parse(currentData.parts);
+                currentData.commentMatrix = JSON.parse(currentData.commentMatrix);
                 open_song();
             }
             //console.log(data);
@@ -86,7 +163,6 @@ function create_songnode(song) {
     songnode.setAttribute("data-search", song[2]);
     const link = document.createElement("button");
     link.className = "listbutton"
-    link.setAttribute('onclick', `grab(\'${song[0]}\')`);
     songnode.appendChild(link);
     const songtitle = document.createElement("h5");
     songtitle.className = "song-title";
@@ -104,28 +180,10 @@ function create_songnode(song) {
 }
 
 function search() {
-    // Temporarily create a span element to measure text width
-    const tempSpan = document.createElement('span');
-    tempSpan.style.visibility = 'hidden';
-    tempSpan.style.position = 'absolute';
-    tempSpan.style.whiteSpace = 'pre';
-    tempSpan.textContent = dynamicsearch.value || dynamicsearch.placeholder;
-
-    // Copy font properties from input to span to ensure consistent measurement
-    const inputStyles = window.getComputedStyle(dynamicsearch);
-    tempSpan.style.font = inputStyles.font;
-
-    document.body.appendChild(tempSpan);
-
-    // Adjust the input width based on the span's width
-    dynamicsearch.style.width = (tempSpan.offsetWidth + 10) + 'px';
-
-    document.body.removeChild(tempSpan);
-
+    dynamic_text(dynamicsearch);
     //implementing search behavior
     var current_text = document.getElementById('searchv').value.toLowerCase()
         .replaceAll('ü', 'u').replaceAll('ä', 'a').replaceAll('ö', 'o').replaceAll('ß', 's');
-    //console.log(songlist.childNodes);
     songlist.childNodes.forEach(function(listNode){
         if(listNode.toString() !== '[object Text]') {
             if(listNode.getAttribute("data-search").includes(current_text)) {
@@ -140,11 +198,19 @@ function open_song() {
     displayedKey = currentData.key % 12;
     actualKey = currentData.key % 12;
     capopos = 0;
-    //console.log("Song: " + data.name + ", Key: " + data.key + ", Capo: " + data.Capo);
+
+    //clear current body
+    document.getElementById('sauth').innerHTML = '';
+    document.getElementById('stitle').innerHTML = '';
+    document.getElementById('saltt').innerHTML = '';
+    const body = document.getElementById('sbody');
+    if(body !== null) {body.remove();}
+
+    //console.log("Song: " + currentData.name + ", Key: " + currentData.key + ", KeyShift: " + currentData.KeyShift + ", Capo: " + currentData.Capo);
     document.getElementById('sauth').appendChild(document.createTextNode(currentData.author));
     document.getElementById('stitle').appendChild(document.createTextNode(currentData.name));
     document.getElementById('saltt').appendChild(document.createTextNode(currentData.subTitle));
-    generate_body(currentData.content);
+    generate_body(currentData.parts, currentData.commentMatrix);
     transpose(currentData.KeyShift);
     if(currentData.Capo !== 0) {transpose(12-(currentData.Capo % 12), true);}
     zoom(0);
@@ -152,12 +218,14 @@ function open_song() {
 
     document.getElementById('listScreen').style.left = '-100vw';
     document.getElementById('chordScreen').style.left = '0';
+    current_window = "chords"
 }
 
 async function back_to_list() {
     autoscrollvar = false;
     document.getElementById('listScreen').style.left = '0';
     document.getElementById('chordScreen').style.left = '100vw';
+    current_window = "list"
 
     await sleep(1000);
 
@@ -168,23 +236,336 @@ async function back_to_list() {
     if(body !== null) {body.remove();}
 }
 
-function generate_body(content) {
+function open_editor() {
+    var editor = document.getElementById('editScreen');
+    editor.style.left = '0';
+
+    if(current_window === "chords") {
+        document.getElementById('chordScreen').style.left = '-100vw';
+        current_window = "edit";
+
+        document.getElementById('eauth').value = currentData.author;
+        document.getElementById('etitle').value = currentData.name;
+        document.getElementById('ealtt').value = currentData.subTitle;
+        document.getElementById('ecopyr').value = currentData.Copyright;
+        document.getElementById('ekey').value = currentData.key;
+        document.getElementById('ekeyshift').value = currentData.KeyShift;
+        document.getElementById('ecapo').value = currentData.Capo;
+        generate_editor_body();
+    } else if(current_window === "list") {
+        document.getElementById('listScreen').style.left = '-100vw';
+        current_window = "add";
+        document.getElementById('eauth').value = '';
+        document.getElementById('etitle').value = '';
+        document.getElementById('ealtt').value = '';
+        document.getElementById('ecopyr').value = '';
+        document.getElementById('ekey').value = 0;
+        document.getElementById('ekeyshift').value = 0;
+        document.getElementById('ecapo').value = 0;
+        let ebody = document.getElementById('ebody');
+        ebody.innerHTML = `<div class="epart" data-id="0">                   
+                                <div class="hstack">
+                                    <div class="vstack buttonvstack">
+                                        <div class="chordbutton moveup" data-id="0">
+                                            <div class="cbcon">^</div>
+                                        </div>
+                                        <div class="chordbutton movegone" data-id="0">
+                                            <div class="cbcon">X</div>
+                                        </div>
+                                        <div class="chordbutton movedown" data-id="0">
+                                            <div class="cbcon">v</div>
+                                        </div>
+                                    </div>
+                                    <div class="vstack textvstack">                           
+                                        <div class="ebptitle" contenteditable="true"></div>
+                                        <div class="ebpcontent" contenteditable="true"></div>
+                                    </div>                   
+                                </div>
+                            </div>`;
+        let moveup = ebody.querySelector('.moveup');
+        let movegone = ebody.querySelector('.movegone');
+        let movedown = ebody.querySelector('.movedown');
+        moveup.addEventListener('click', () => nodeswitch(parseInt(moveup.dataset.id)));
+        movegone.addEventListener('click', () => rem_epart(parseInt(movegone.dataset.id)));
+        movedown.addEventListener('click', () => nodeswitch(parseInt(movedown.dataset.id) + 1));
+        editor_len = 1;
+    }
+    document.getElementById("savebut").addEventListener("click", save_song);
+    document.getElementById("discardbut").addEventListener("click", discard_song);
+    document.getElementById("extendbut").addEventListener("click", add_epart);
+    document.getElementById("deletebut").addEventListener("click", remove_song);
+}
+
+function generate_editor_body() {
+    let editor_stage = currentData.parts;
+    editor_len = editor_stage.length;
+    editor_comments = currentData.commentMatrix;
+
+    let innerhtmlstring="";
+
+    for(let i = 0; i < editor_stage.length; i++) {
+        innerhtmlstring += `<div class="epart" data-id="${i}">                   
+                                <div class="hstack">
+                                    <div class="vstack buttonvstack">
+                                        <div class="chordbutton moveup" data-id="${i}">
+                                            <div class="cbcon">^</div>
+                                        </div>
+                                        <div class="chordbutton movegone" data-id="${i}">
+                                            <div class="cbcon">X</div>
+                                        </div>
+                                        <div class="chordbutton movedown" data-id="${i}">
+                                            <div class="cbcon">v</div>
+                                        </div>
+                                    </div>
+                                    <div class="vstack textvstack">                           
+                                        <div class="ebptitle" contenteditable="true">${editor_stage[i][0]}</div>
+                                        <div class="ebpcontent" contenteditable="true">${prepare_textarea(editor_stage[i][1])}</div>
+                                    </div>                   
+                                </div>
+                            </div>`;
+    }
+
+    document.getElementById('ebody').innerHTML = innerhtmlstring;
+
+    document.querySelectorAll('.moveup').forEach(function(moveup) {
+        moveup.addEventListener('click', () => nodeswitch(parseInt(moveup.dataset.id)));
+    });
+    document.querySelectorAll('.movegone').forEach(function(movegone) {
+        movegone.addEventListener('click', () => rem_epart(parseInt(movegone.dataset.id)));
+    });
+    document.querySelectorAll('.movedown').forEach(function(movedown) {
+        movedown.addEventListener('click', () => nodeswitch(parseInt(movedown.dataset.id) + 1));
+    });
+}
+
+function nodeswitch(id) {
+    /* id = id of the new first el: nodeswitch(1) switches the 0 and the 1 el */
+    //filter invalid cases
+    if(id===0) {console.log("cannot move first up"); return;}
+    if(id===editor_len) {console.log("cannot move last down"); return;}
+
+    const parent = document.getElementById('ebody');
+    const oldfirst = parent.querySelector(`[data-id="${id-1}"]`);
+    const newfirst = parent.querySelector(`[data-id="${id}"]`);
+
+    //displayed values
+    parent.insertBefore(newfirst, oldfirst);
+    oldfirst.dataset.id = id;
+    oldfirst.querySelector('.moveup').dataset.id = id;
+    oldfirst.querySelector('.movedown').dataset.id = id;
+    oldfirst.querySelector('.movegone').dataset.id = id;
+    newfirst.dataset.id = id-1;
+    newfirst.querySelector('.moveup').dataset.id = id-1;
+    newfirst.querySelector('.movedown').dataset.id = id-1;
+    newfirst.querySelector('.movegone').dataset.id = id-1;
+}
+
+function add_epart() {
+    const new_epart = document.createElement('div');
+    const new_id = document.querySelectorAll(".epart").length;
+    new_epart.classList.add('epart');
+    new_epart.setAttribute("data-id", String(new_id));
+    new_epart.innerHTML = `<div class="hstack">
+                                    <div class="vstack buttonvstack">
+                                        <div class="chordbutton moveup" data-id="${new_id}">
+                                            <div class="cbcon">^</div>
+                                        </div>
+                                        <div class="chordbutton movegone" data-id="${new_id}">
+                                            <div class="cbcon">X</div>
+                                        </div>
+                                        <div class="chordbutton movedown" data-id="${new_id}">
+                                            <div class="cbcon">v</div>
+                                        </div>
+                                    </div>
+                                    <div class="vstack textvstack">                           
+                                        <div class="ebptitle" contenteditable="true"></div>
+                                        <div class="ebpcontent" contenteditable="true"></div>
+                                    </div>                   
+                                </div>`;
+    document.getElementById('ebody').appendChild(new_epart);
+    let moveup = new_epart.querySelector('.moveup');
+    let movegone = new_epart.querySelector('.movegone');
+    let movedown = new_epart.querySelector('.movedown');
+    moveup.addEventListener('click', () => nodeswitch(parseInt(moveup.dataset.id)));
+    movegone.addEventListener('click', () => rem_epart(parseInt(movegone.dataset.id)));
+    movedown.addEventListener('click', () => nodeswitch(parseInt(movedown.dataset.id) + 1));
+    editor_len++;
+}
+
+function rem_epart(id) {
+    for (const epart of document.querySelectorAll('.epart')) {
+        if (parseInt(epart.dataset.id) < id) {
+        } else if(parseInt(epart.dataset.id) === id) {
+            epart.remove();
+        } else {
+            let new_id = parseInt(epart.dataset.id)-1;
+            epart.setAttribute("data-id", new_id);
+            [epart.querySelector('.moveup'), epart.querySelector('.movedown'), epart.querySelector('.movegone')].forEach(fn => {
+                fn.setAttribute("data-id", new_id);
+            });
+        }
+    }
+}
+
+function prepare_textarea(text) {
+    let returnsting = ""
+    let lines = text.split('\n');
+    for(let i = 0; i < lines.length; i++) {
+        returnsting += "<div>" + lines[i] + "</div>";
+    }
+    return returnsting;
+}
+
+async function save_song() {
+    //setup vars for the api
+    let apiUrl = 'API/sql.php';
+    let data = {}
+    let parts = []
+
+    //build my songmatrix
+    for (let i = 0; i < editor_len; i++) {
+        let parttuple = [];
+        let texts = document.querySelector(`.epart[data-id="${i}"] .hstack .textvstack`);
+
+        //console.log(texts);
+
+        const ptitle = texts.querySelector('.ebptitle').textContent;
+        const pcontent = texts.querySelector('.ebpcontent').innerHTML
+            .replaceAll("</div><div>", "\n")
+            .replace("<div>", "")
+            .replace("</div>", "")
+
+
+        parttuple.push(ptitle);
+        parttuple.push(pcontent);
+
+        if(ptitle && pcontent) {
+            parts.push(parttuple);
+        }
+    }
+    //create deepsearch string
+    const etitle = document.querySelector('#etitle').value;
+    const ealtt = document.querySelector('#ealtt').value;
+    const eauth = document.querySelector('#eauth').value;
+    const ecopyr = document.querySelector('#ecopyr').value;
+    const verselines = (parts.find(d => ["Verse", "Verse 1", "Strophe", "Strophe 1"].includes(d[0])) || ["", ""])[1].slice(0, 40);
+    const choruslines = (parts.find(d => ["Chorus", "Refrain"].includes(d[0])) || ["", ""])[1].slice(0, 40);
+    let deepsearch = etitle + "\n" + ealtt + "\n" + eauth + "\n" + verselines + "\n" + choruslines;
+    deepsearch = deepsearch.toLowerCase()
+        .replaceAll('ü', 'u').replaceAll('ä', 'a').replaceAll('ö', 'o').replaceAll('ß', 's')
+        .replace(new RegExp("\\[.*?\\]", "g"), "");
+
+    //file in the vars
+    data.name = etitle;
+    data.altt = ealtt;
+    data.auth = eauth;
+    data.copyr = ecopyr
+    data.key = document.querySelector('#ekey').value;
+    data.keyshift = document.querySelector('#ekeyshift').value;
+    data.capo = document.querySelector('#ecapo').value;
+    data.parts = JSON.stringify(parts);
+    data.deepsearch = deepsearch;
+    if(current_window === "edit") {
+        data.action = "edit";
+        data.id = currentData["Id"];
+    } else if(current_window === "add") {
+        data.action = "add";
+    }
+
+    //console.log(data);
+    //console.log(currentData);
+
+    //fetch
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",  // tell server it's JSON
+            },
+            body: JSON.stringify(data),            // convert JS object to JSON
+        });
+
+        /*if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }*/
+
+        //console.log(await response.text());
+    } catch (error) {
+        console.error("POST request failed:", error);
+    }
+
+    grab(data.name)
+    if(current_window === "add") {grab();}
+    document.getElementById('editScreen').style.left = '100vw';
+    current_window = "chords";
+}
+
+async function remove_song() {
+    let apiUrl = 'API/sql.php';
+    let data = {}
+    data.action = "delete";
+    data.id = currentData["Id"];
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",  // tell server it's JSON
+            },
+            body: JSON.stringify(data),            // convert JS object to JSON
+        });
+
+        /*if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }*/
+
+        //console.log(await response.text());
+    } catch (error) {
+        console.error("POST request failed:", error);
+    }
+
+    grab();
+    document.getElementById('editScreen').style.left = '100vw';
+    back_to_list();
+}
+
+function discard_song() {
+    document.getElementById('editScreen').style.left = '100vw';
+    if(current_window === "edit") {
+        document.getElementById('chordScreen').style.left = '0';
+        current_window = "chords";
+    } else if(current_window === "add") {
+        document.getElementById('listScreen').style.left = '0';
+        current_window = "list";
+    }
+}
+
+function generate_body(parts, commentMatrix) {
     //console.log(content);
     const body = document.createElement('div');
     body.id = "sbody";
 
-    let parts = partseperator(content);
     //console.log(parts);
 
-    for(let i = 0; i < parts.length; i+=2) {
+    for(let i = 0; i < parts.length; i++) {
         const ppart = document.createElement('div');
         ppart.className = 'ppart';
         const ptitle = document.createElement('h4');
         ptitle.className = 'ptitle';
-        ptitle.appendChild(document.createTextNode(parts[i]));
+        ptitle.appendChild(document.createTextNode(parts[i][0]));
         ppart.appendChild(ptitle);
 
-        let lines = parts[i+1].split('\n');
+        //console.log(parts[i]);
+
+        let lines = parts[i][1].split('\n');
+
+        if(commentMatrix && commentMatrix[viewer] && commentMatrix[viewer][String(i)]) {
+            let comms = commentMatrix[viewer][String(i)];
+            if(comms) {
+                for(let ii = 0; ii < comms.length; ii++) {
+                    lines.splice(comms[ii][0], 0, "(" + comms[ii][1] + ")");
+                }
+            }
+        }
 
         //console.log(lines);
 
@@ -211,8 +592,8 @@ function generate_body(content) {
 
         //console.log(lines);
 
-        var hasnochords = parts[i+1].replace('[', '') === parts[i+1];
-        var hasnotabs = parts[i+1].replace('{sot}', '') === parts[i+1];
+        var hasnochords = parts[i][1].replace('[', '') === parts[i][1];
+        var hasnotabs = parts[i][1].replace('{sot}', '') === parts[i][1];
         var tablines = false;
         if(hasnochords && hasnotabs || textmode === 1) {
             for(let ii = 0; ii < lines.length; ii++) {
@@ -250,7 +631,7 @@ function generate_body(content) {
                     tline.className = "tline";
                     const tlinet = document.createElement('p');
                     tlinet.className = 'tab';
-                    tlinet.textContent = line/*.substring(1, line.length - 1)*/;
+                    tlinet.textContent = line;
                     tline.appendChild(tlinet);
                     ppart.appendChild(tline);
                     return;
@@ -283,7 +664,6 @@ function generate_body(content) {
             for(let ii = 0; ii < struc_array.length; ii+=2) {
                 if(ii === 0 && struc_array[0] === '') {continue;}
                 const block = document.createElement('div');
-                /*TODO: Check for space at the end of even el*/
                 if (struc_array[ii].charAt(struc_array[ii].length - 1) === ' ') {
                     block.className = "microblock spacebehind";
                 } else {
@@ -316,13 +696,11 @@ function generate_body(content) {
 }
 
 function partseperator(content, startv='{c: ', endv ='}') {
+    /*content: the haystack | startv: opening Title Tag | endv: closing Title Tag //
+    * returns an Array of all titles on even indices and content on odd ones //
+    * example: partseperator("[A]Here [G]Goes", "[", "]") => ["A", "Here ", "G", "Goes"]*/
     let backarr = [];
     let f_ed_arr = content.split(startv);
-    /*if(f_ed_arr[0] === content) {
-        backarr.push('');
-        backarr.push(f_ed_arr[0]);
-        return backarr;
-    }*/
     let hastitle = content.startsWith(startv);
     f_ed_arr.forEach(function(e) {
         let secttitle = "";
@@ -341,10 +719,6 @@ function partseperator(content, startv='{c: ', endv ='}') {
         hastitle = true;
     });
     return backarr;
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function zoom() {
@@ -457,13 +831,11 @@ function set_palette(value) {
 }
 
 async function fullscreen() {
-    console.log('before fullscreen(): ', full);
     if (full) {
         closeFullscreen();
     } else {
         openFullscreen();
     }
-    console.log('after fullscreen(): ', full);
 }
 
 function openFullscreen() {
@@ -478,7 +850,6 @@ function openFullscreen() {
 }
 
 function closeFullscreen() {
-    console.log('here1');
     const elem = document/*.documentElement*/;
     if (elem.exitFullscreen) {
         elem.exitFullscreen();
@@ -535,47 +906,7 @@ async function update_VA_speed() {
     init_autoscroll();
 }
 
-//TODO:
-function startAutoScroll(element, pixelsPerSecond) {
-    let lastTimestamp = 0; // Keep track of the last timestamp for smooth animation
-    let accumulatedDistance = 0; // Accumulates fractional scroll distances
-
-    function smoothScroll(timestamp) {
-        if (lastTimestamp) {
-            // Calculate time elapsed between frames in seconds
-            const elapsed = (timestamp - lastTimestamp) / 1000;
-
-            // Calculate how many pixels to scroll this frame
-            accumulatedDistance += pixelsPerSecond * elapsed;
-
-            // Scroll only full pixels and accumulate fractional scroll values
-            const scrollAmount = Math.floor(accumulatedDistance);
-            if (scrollAmount > 0) {
-                element.scrollTop += scrollAmount;
-                accumulatedDistance -= scrollAmount; // Subtract scrolled distance from accumulator
-            }
-        }
-
-        lastTimestamp = timestamp;
-
-        let stopper = false;
-        // Abbruchbedingungen
-        if (element.scrollTop >= element.scrollHeight - element.clientHeight) {
-            stopper = true;
-        }
-        if (!autoscrollvar) {
-            stopper = true;
-        }
-
-        if (!stopper) {
-            requestAnimationFrame(smoothScroll);
-        } // Continue scrolling
-    }
-
-    // Start the scrolling animation
-    requestAnimationFrame(smoothScroll);
-}
-
+/*
 ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "msfullscreenchange"].forEach(
     eventType => document.addEventListener(eventType, async function () {
         if (full) {
@@ -593,4 +924,4 @@ function startAutoScroll(element, pixelsPerSecond) {
             console.log("opened")
         }
     }, false)
-);
+);*/

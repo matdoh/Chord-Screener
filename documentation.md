@@ -3,32 +3,55 @@
         font-style: italic;
         opacity: 60%;
     }
+    .outdated {
+        color: #660000
+    }
+    .new {
+        color: #44FF44;
+    }
 </style>
 
 <h1>Consider this a Set of Sticky Notes, I refuse to write a real documentation</h1>
+<h2>define_con.php</h2>
+there is a file called "define_con.php" in the main folder. It will not be put on git for safety-reasons, but it looks like this:
+
+```php
+$servername = "localhost";
+$user = "some username";
+$pw = "some password";
+$db = "some database name";
+
+global $con;
+$con = new mysqli($servername, $user, $pw, $db);
+$con->set_charset("utf8");
+```
 <h2>Database Structure</h2>
 Italic rows are currently not used
+<h3>songs</h3>
 <table>
-<th>name</th><th>type</th><th>description</th>
+<th>name</th><th>type</th><th>description</th><th>editor range</th>
 <tr>
     <td>Capo</td>
     <td>Int(4)</td>
     <td>Capo position</td>
+    <td>i</td>
 </tr>
 <tr class="tilted">
     <td>Chords</td>
     <td>Int(1)</td>
     <td>no clue</td>
 </tr>
-<tr class="tilted">
+<tr>
     <td>Copyright</td>
     <td>Varchar(256)</td>
     <td>a copyright hint at the end of a song, currently not displayed.</td>
+    <td>s: dummy in add, not in edit</td>
 </tr>
 <tr>
     <td>Deepsearch</td>
     <td>Varchar(256)</td>
     <td>String of keywords for a search-function</td>
+    <td>s: dummy in add, not in edit</td>
 </tr>
 <tr class="tilted">
     <td>Deleted</td>
@@ -50,15 +73,17 @@ Italic rows are currently not used
     <td>Int(1)</td>
     <td>...</td>
 </tr>
-<tr class="tilted">
+<tr>
     <td>Id</td>
     <td>Int(255)</td>
     <td>...</td>
+    <td>i: in edit, a_i in add</td>
 </tr>
-<tr class="tilted">
+<tr>
     <td>KeyShift</td>
     <td>Int(4)</td>
-    <td>Problably to change displayed Key w/o using actual key, might implement at some point</td>
+    <td>The set key (not the Original Key)</td>
+    <td>i</td>
 </tr>
 <tr class="tilted">
     <td>LinkedAudio</td>
@@ -85,7 +110,7 @@ Italic rows are currently not used
     <td>Varchar(256)</td>
     <td>I must've known at some point but not anymore</td>
 </tr>
-<tr class="tilted">
+<tr>
     <td>SongNumber</td>
     <td>Int(10)</td>
     <td>...</td>
@@ -119,8 +144,9 @@ Italic rows are currently not used
     <td>author</td>
     <td>Varchar(128)</td>
     <td>...</td>
+    <td>s</td>
 </tr>
-<tr>
+<tr class="outdated">
     <td>content</td>
     <td>Varchar(8192)</td>
     <td>The entire ChordPro-Content</td>
@@ -139,6 +165,7 @@ Italic rows are currently not used
     <td>key</td>
     <td>Int(4)</td>
     <td>...</td>
+    <td>i</td>
 </tr>
 <tr class="tilted">
     <td>locked</td>
@@ -154,11 +181,13 @@ Italic rows are currently not used
     <td>name</td>
     <td>Varchar(128)</td>
     <td>...</td>
+    <td>s</td>
 </tr>
 <tr>
     <td>subTitle</td>
     <td>Varchar(128)</td>
     <td>...</td>
+    <td>s</td>
 </tr>
 <tr class="tilted">
     <td>timeSig</td>
@@ -189,5 +218,72 @@ Italic rows are currently not used
     <td>_tags</td>
     <td>Varchar(64)</td>
     <td>Actually Cool, Might implement</td>
+</tr>
+<tr class="new">
+    <td>parts</td>
+    <td>Varchar(8192)</td>
+    <td>array(array(header, content))</td>
+    <td>s</td>
+</tr>
+<tr class="new">
+    <td>commentMatrix</td>
+    <td>Varchar(1023)</td>
+    <td>dict(author, dict(part, array(array(line, content))))</td>
+    <td>s: dummycomment in add, will got its own editor</td>
+</tr>
+</table>
+<h3>users</h3>
+<table>
+<th>name</th><th>type</th><th>description</th>
+<tr>
+    <td>Id</td>
+    <td>Bigint(20)</td>
+    <td>...</td>
+</tr>
+<tr class="tilted">
+    <td>username</td>
+    <td>Varchar(63)</td>
+    <td>a display name</td>
+</tr>
+<tr>
+    <td>hashed_access_key</td>
+    <td>Varchar(127)</td>
+    <td>Similar to a hashed password, only key will be used to login</td>
+</tr>
+<tr>
+    <td>reference_key</td>
+    <td>Varchar(127)</td>
+    <td>Key used in visible code, to display comments etc.</td>
+</tr>
+<tr>
+    <td>roles</td>
+    <td>Varchar(12)</td>
+    <td>a rolestring where role is determined my index.
+    <br>[0]...Member
+    <br>[0]=1...See Songlist..."Previewer"
+    <br>[0]=2...Interact with Songlist..."Viewer"
+    <span class="tilted"><br>[0]=3...Write Comments..."Member"/"Commenter"</span>
+    <br>[1]...Editor
+    <br>[1]=1...Edit/Create/Delete Songs..."Editor"
+    <span class="tilted"><br>[1]=2...Restore deleted Songs
+    <br>[1]=3...Meddle with Comments
+    <br>[2]...Admin
+    <br>[2]=1...Add/Remove People from own Band..."Bandmanager"
+    <br>[2]=2...Add/Remove People from all Bands</span></td>
+</tr>
+</table>
+
+<h2>Cookies</h2>
+<table>
+<th>name</th><th>type</th><th>description</th>
+<tr>
+    <td>access</td>
+    <td>String</td>
+    <td>hashed access key from the database</td>
+</tr>
+<tr>
+    <td>ref</td>
+    <td>String</td>
+    <td>another hash value of lower security significance</td>
 </tr>
 </table>
