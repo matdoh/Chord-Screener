@@ -17,6 +17,10 @@ function ensure_roles () {
     }
 }
 
+function get_roles() {
+    return json_encode($_SESSION["roles"]);
+}
+
 function allow_action($category, $required_rank) {
     ensure_roles();
     if($_SESSION["roles"][$category] < $required_rank) {die("Access denied.");}

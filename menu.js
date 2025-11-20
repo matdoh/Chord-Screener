@@ -43,6 +43,7 @@ var editor_comments = {}
 //Start-functions
 setViewer();
 grab();
+removeUninteresting();
 search();
 dynamicsearch.addEventListener('input', search);
 //chordbarbuts
@@ -82,12 +83,31 @@ editSect.addEventListener('wheel', function(event) {
 });
 
 //Funcs
-async function killswitch(role) {
-    if(role==="admin") {
-        //TODO: Server killing client
-        return false;
-    }
+async function removeUninteresting() {
+    let roledata = [0,0,0];
+    fetch('API/sql.php?roles=true')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            let res;
+            res = response.json();
+            console.log(res);
+            return res;
+        })
+        .then(data => {
+            roledata = data;
+            console.log(roledata);
+
+            document.querySelectorAll(".editor").forEach(button => {
+                if(parseInt(data[1]) < 1) {button.setAttribute("style", "display:none;");}
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
+
 function setViewer() {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ref=`);
@@ -217,7 +237,6 @@ async function back_to_list() {
 }
 
 function open_editor() {
-    killswitch("admin");
     var editor = document.getElementById('editScreen');
     editor.style.left = '0';
 

@@ -17,6 +17,8 @@ switch ($methode) {
     case 'GET':
         if(!empty($_GET['song'])) {
             $wanted = $_GET['song'];
+        } elseif(!empty($_GET['roles'])) {
+            $wanted = "roles";
         } else {
             $wanted = "list";
         }
@@ -32,6 +34,9 @@ switch ($methode) {
                 }
 
                 echo json_encode($songlist);
+                break;
+            case "roles":
+                echo get_roles();
                 break;
             default:
                 allow_by_role("Viewer");
