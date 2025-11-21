@@ -430,11 +430,16 @@ async function save_song() {
         //console.log(texts);
 
         const ptitle = texts.querySelector('.ebptitle').textContent;
-        const pcontent = texts.querySelector('.ebpcontent').innerHTML
+        const pcontentraw = texts.querySelector('.ebpcontent').innerHTML
             .replaceAll("</div><div>", "\n")
-            .replace("<div>", "")
-            .replace("</div>", "")
-
+            .replace("</div>", "");
+        let pcontent
+        if(pcontentraw.startsWith("<div>")) {
+            pcontent = pcontentraw.replace("<div>", "")
+        } else {
+            pcontent = pcontentraw.replace("<div>", "\n");
+        }
+        pcontent = pcontent.replaceAll("&nbsp;\n", "\n");
 
         parttuple.push(ptitle);
         parttuple.push(pcontent);
