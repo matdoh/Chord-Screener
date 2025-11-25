@@ -4,10 +4,11 @@ import {dynamic_text, sleep} from "./inc/utils.js";
 //Global Vars
 const dynamicsearch = document.getElementById('searchv');
 const scrollinput = document.getElementById('AVSpeedSlide');
-const scrollSect = document.getElementById('chordScreen')
-const editSect = document.getElementById('editScreen')
+const scrollSect = document.getElementById('chordScreen');
+const editSect = document.getElementById('editScreen');
 const scaleinput = document.getElementById('ScaleIn');
 const songlist = document.getElementById('songlist');
+const editortextinputs = document.querySelectorAll('#ehead label input[type=text]');
 const Kreuzkey = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
 const bKey = ["A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab"];
 const keyDict = [
@@ -62,6 +63,9 @@ document.getElementById("cbscrbut").addEventListener('click', autoscroll);
 scrollinput.addEventListener('input', update_VA_speed);
 document.getElementById("editbut").addEventListener("click", open_editor);
 document.getElementById("new_song_but").addEventListener("click", open_editor);
+editortextinputs.forEach(input => {
+    addEventListener('input', () => dynamic_text(input));
+});
 
 //guesture control
 scrollSect.addEventListener('wheel', function(event) {
@@ -294,6 +298,9 @@ function open_editor() {
     document.getElementById("discardbut").addEventListener("click", discard_song);
     document.getElementById("extendbut").addEventListener("click", add_epart);
     document.getElementById("deletebut").addEventListener("click", remove_song);
+    editortextinputs.forEach(inp => {
+        dynamic_text(inp);
+    })
 }
 
 function generate_editor_body() {
