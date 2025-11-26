@@ -404,6 +404,7 @@ function rem_epart(id) {
         if (parseInt(epart.dataset.id) < id) {
         } else if(parseInt(epart.dataset.id) === id) {
             epart.remove();
+            editor_len--;
         } else {
             let new_id = parseInt(epart.dataset.id)-1;
             epart.setAttribute("data-id", new_id);
@@ -434,29 +435,25 @@ async function save_song() {
         let parttuple = [];
         let texts = document.querySelector(`.epart[data-id="${i}"] .hstack .textvstack`);
 
-        //console.log(texts);
-
         const ptitle = texts.querySelector('.ebptitle').textContent;
-        const pcontentraw = texts.querySelector('.ebpcontent').innerHTML
-            .replaceAll("</div><div>", "\n")
-            .replace("</div>", "");
-        let pcontent
-        if(pcontentraw.startsWith("<div>")) {
-            pcontent = pcontentraw.replace("<div>", "")
-        } else {
-            pcontent = pcontentraw.replace("<div>", "\n");
-        }
-        pcontent = pcontent.replaceAll("&nbsp;\n", "\n");
-        pcontent = pcontent.replaceAll("&nbsp;", " ");
-        pcontent = pcontent.replaceAll("<br>", " \n");
+        const pcontent2 = texts.querySelector('.ebpcontent');
+        let pcontenta = recursive_line_breaker(pcontent2);
+        let pcontents = "";
+        pcontenta.forEach(line => {
+            if(line==="") {line=" ";}
+            pcontents = pcontents + "\n" + line;
+        });
+        pcontents = pcontents.replace("\n", "");
+        pcontents = pcontents.replaceAll("&nbsp;\n", "\n");
+        pcontents = pcontents.replaceAll("&nbsp;", " ");
 
         parttuple.push(ptitle);
-        parttuple.push(pcontent);
-
+        parttuple.push(pcontents);
         if(ptitle && pcontent) {
             parts.push(parttuple);
         }
     }
+
     //create deepsearch string
     const etitle = document.querySelector('#etitle').value;
     const ealtt = document.querySelector('#ealtt').value;
@@ -512,6 +509,19 @@ async function save_song() {
     if(current_window === "add") {grab();}
     document.getElementById('editScreen').style.left = '100vw';
     current_window = "chords";
+}
+
+function recursive_line_breaker(parent) {
+    let nodelist = [];
+    for (let i=0; i<parent.childNodes.length; i++) {
+        let node = parent.childNodes[i];
+        if(node.children && node.children.length > 0) {
+            nodelist = [...nodelist, ...recursive_line_breaker(node)];
+        } else {
+            nodelist.push(node.textContent);
+        }
+    }
+    return nodelist;
 }
 
 async function remove_song() {
