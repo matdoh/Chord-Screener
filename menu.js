@@ -447,6 +447,8 @@ async function save_song() {
             pcontent = pcontentraw.replace("<div>", "\n");
         }
         pcontent = pcontent.replaceAll("&nbsp;\n", "\n");
+        pcontent = pcontent.replaceAll("&nbsp;", " ");
+        pcontent = pcontent.replaceAll("<br>", " \n");
 
         parttuple.push(ptitle);
         parttuple.push(pcontent);
