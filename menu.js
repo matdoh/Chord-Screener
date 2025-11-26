@@ -449,7 +449,7 @@ async function save_song() {
 
         parttuple.push(ptitle);
         parttuple.push(pcontents);
-        if(ptitle && pcontent) {
+        if(ptitle && pcontents) {
             parts.push(parttuple);
         }
     }
@@ -790,6 +790,7 @@ function transpose(keyShift, capotune = false) {
     if(keyShift === 0) {return;}
 
     document.querySelectorAll('.chord').forEach(e => {
+        if(["N.C", "N.C."].includes(e.textContent)) {return;}
         let partial_e = e.textContent.split('/');
         let new_chord = "";
         if(oldKeys === Kreuzkey) {
