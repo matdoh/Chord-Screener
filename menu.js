@@ -96,12 +96,12 @@ async function removeUninteresting() {
             }
             let res;
             res = response.json();
-            console.log(res);
+            //console.log(res);
             return res;
         })
         .then(data => {
             roledata = data;
-            console.log(roledata);
+            //console.log(roledata);
 
             document.querySelectorAll(".editor").forEach(button => {
                 if(parseInt(data[1]) < 1) {button.setAttribute("style", "display:none;");}
@@ -663,6 +663,7 @@ function generate_body(parts, commentMatrix) {
                 }
             }
 
+            //COMMENT LINE
             if(line.charAt(0) === '(' && line.charAt(line.length - 1) === ')') {
                 const pline = document.createElement('div');
                 pline.className = "pline";
@@ -672,6 +673,33 @@ function generate_body(parts, commentMatrix) {
                     .replaceAll('[', '<span class="commentChord">')
                     .replaceAll(']', '</span>');
                 pline.appendChild(plinet);
+                ppart.appendChild(pline);
+                return;
+            }
+
+            //TEXT LINE
+            if(line.replace("[", "") === line) {
+                const pline = document.createElement('div');
+                pline.className = "pline textpline";
+                const plinet = document.createElement('p');
+                plinet.className = 'microtext textline';
+                plinet.textContent = line;
+                pline.appendChild(plinet);
+                ppart.appendChild(pline);
+                return;
+            }
+
+            //CHORDLINE
+            if(line.replace(new RegExp("\\[.*?\\]", "g"), "") === "") {
+                const pline = document.createElement('div');
+                pline.className = "pline";
+                let chordarr = Array.from(line.matchAll(/\[([^\]]+)\]/g), m => m[1]);
+                for(let i=0; i<chordarr.length; i++) {
+                    const chord = document.createElement('p');
+                    chord.className = 'chord';
+                    chord.textContent = chordarr[i];
+                    pline.appendChild(chord);
+                }
                 ppart.appendChild(pline);
                 return;
             }
