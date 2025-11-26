@@ -4,6 +4,7 @@ import {dynamic_text, sleep} from "./inc/utils.js";
 //Global Vars
 const dynamicsearch = document.getElementById('searchv');
 const scrollinput = document.getElementById('AVSpeedSlide');
+const screenbar = document.getElementById('screenbar');
 const scrollSect = document.getElementById('chordScreen');
 const editSect = document.getElementById('editScreen');
 const scaleinput = document.getElementById('ScaleIn');
@@ -107,7 +108,6 @@ document.addEventListener("keydown", (e) => {
         }
 
     }
-
     // Shift + N
     if (e.shiftKey && e.key === "n") {
         e.preventDefault();
@@ -115,9 +115,7 @@ document.addEventListener("keydown", (e) => {
 
         return;
     }
-
     // if
-
 });
 
 
@@ -184,6 +182,13 @@ function setViewer() {
     if (parts.length >= 2) {
         viewer = parts.pop().split(';').shift();
     }
+}
+
+function setWindow(windo) {
+    current_window = windo;
+    if(windo==="list") {screenbar.style.left = "0";}
+    if(windo==="chords") {screenbar.style.left = "-100vw";}
+    if(["add", "edit"].includes(windo)) {screenbar.style.left = "-200vw";}
 }
 function grab(song = '') {
     // Define the API URL
@@ -287,16 +292,12 @@ function open_song() {
     zoom(0);
     scrollspeed = calc_AV_speed(document.getElementById('chordScreen'));
 
-    document.getElementById('listScreen').style.left = '-100vw';
-    document.getElementById('chordScreen').style.left = '0';
-    current_window = "chords"
+    setWindow("chords");
 }
 
 async function back_to_list() {
     autoscrollvar = false;
-    document.getElementById('listScreen').style.left = '0';
-    document.getElementById('chordScreen').style.left = '100vw';
-    current_window = "list"
+    setWindow("list");
 
     await sleep(1000);
 
@@ -312,8 +313,7 @@ function open_editor() {
     editor.style.left = '0';
 
     if(current_window === "chords") {
-        document.getElementById('chordScreen').style.left = '-100vw';
-        current_window = "edit";
+        setWindow("edit");
 
         document.getElementById('eauth').value = currentData.author;
         document.getElementById('etitle').value = currentData.name;
@@ -324,8 +324,7 @@ function open_editor() {
         document.getElementById('ecapo').value = currentData.Capo;
         generate_editor_body();
     } else if(current_window === "list") {
-        document.getElementById('listScreen').style.left = '-100vw';
-        current_window = "add";
+        setWindow("add");
         document.getElementById('eauth').value = '';
         document.getElementById('etitle').value = '';
         document.getElementById('ealtt').value = '';
@@ -574,8 +573,7 @@ async function save_song() {
 
     grab(data.name)
     if(current_window === "add") {grab();}
-    document.getElementById('editScreen').style.left = '100vw';
-    current_window = "chords";
+    setWindow("chords")
 }
 
 function recursive_line_breaker(parent) {
@@ -622,11 +620,9 @@ async function remove_song() {
 function discard_song() {
     document.getElementById('editScreen').style.left = '100vw';
     if(current_window === "edit") {
-        document.getElementById('chordScreen').style.left = '0';
-        current_window = "chords";
+        setWindow("chords")
     } else if(current_window === "add") {
-        document.getElementById('listScreen').style.left = '0';
-        current_window = "list";
+        setWindow("list");
     }
 }
 

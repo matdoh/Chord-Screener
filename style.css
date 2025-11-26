@@ -17,16 +17,25 @@ button {
     background: rgba(0,0,0,0);
 }
 body {
-    position: absolute;
+    position: fixed;
     background: var(--backlayer);
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
+    overflow: hidden;
 
     height: 100vh;
     width: 100vw;
     left: 0;
     top: 0;
+}
+#screenbar {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: 0.4s;
 }
 input[type=text], input[type=number] {
     font-size: 1em;
@@ -46,7 +55,6 @@ input[type=text]:focus, input[type=number]:focus {
 
 /*LIST-SCREEN*/
 #listScreen {
-    position: absolute;
     height: 100vh;
     width: 100vw;
     background: var(--backlayer);
@@ -129,7 +137,6 @@ input[type=text]:focus, input[type=number]:focus {
 
 /*CHORD-SCREEN: GENERAL*/
 #chordScreen {
-    position: absolute;
     height: 100vh;
     width: 100vw;
     background: var(--backlayer);
@@ -412,7 +419,6 @@ input[type="number"] {
 }
 /*EDIT-SCREEN*/
 #editScreen {
-    position: absolute;
     height: 100vh;
     width: 100vw;
     background: var(--backlayer);
