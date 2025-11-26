@@ -440,12 +440,18 @@ input[type="number"] {
 
         input[type=text] {
             width: 100%;
+            color: var(--accent1);
             font-family: "Azeret Mono", monospace;
+            background-color: var(--base2);
+            border-radius: 2px;
         }
         input[type=number] {
             width: 1.5em;
             font-family: "Azeret Mono", monospace;
             text-align: center;
+            color: var(--accent1);
+            background-color: var(--base2);
+            border-radius: 2px;
         }
     }
 }
@@ -472,11 +478,12 @@ input[type="number"] {
 
 .ebptitle, .ebpcontent {
     background: var(--base2);
-    border: 1px solid var(--font);
+    /*border: 1px solid var(--font);*/
     color: var(--font);
     font-family: "Azeret Mono", monospace;
     border-radius: 2px;
     width: 100%;
+    padding: 4px;
 }
 
 .hstack {
