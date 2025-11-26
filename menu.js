@@ -851,7 +851,7 @@ async function zoom() {
         parag.style.fontSize = `${scale * 28.8}px`;
     });
     document.querySelectorAll('.microblock').forEach(parag => {
-        parag.style.height = `${(1.4 * scale - 0.4) * 64}px`;
+        parag.style.height = `${scale * 64}px`;
     });
     document.querySelectorAll('.spacebehind').forEach(parag => {
         parag.style.marginRight = `${scale * 7}px`;

@@ -212,7 +212,7 @@ input[type=text]:focus, input[type=number]:focus {
 .microblock {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: space-between;
     /*margin-left: 6px;*/
     height: 4em;
 }
