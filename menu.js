@@ -86,6 +86,41 @@ editSect.addEventListener('wheel', function(event) {
     }
 });
 
+//hotkeys
+document.addEventListener("keydown", (e) => {
+    console.log("keydown");
+    if(current_window === "edit") {
+        console.log("in editor");
+        // New Chord
+        if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+            e.preventDefault();
+            setChordAtCursor();
+            return;
+        }
+        for(let i = 0; i < 10; i++) {
+            let istr = "" + i;
+            if ((e.metaKey || e.ctrlKey) && e.key === istr) {
+                e.preventDefault();
+                setChordAtCursor(document.getElementById("hotchord"+istr).value);
+                return;
+            }
+        }
+
+    }
+
+    // Shift + N
+    if (e.shiftKey && e.key === "n") {
+        e.preventDefault();
+        console.log("New item shortcut triggered!");
+
+        return;
+    }
+
+    // if
+
+});
+
+
 //Funcs
 async function removeUninteresting() {
     let roledata = [0,0,0];
@@ -110,6 +145,37 @@ async function removeUninteresting() {
         .catch(error => {
             console.error('Error:', error);
         });
+}
+
+function setChordAtCursor(chord="") {
+    const sel = window.getSelection();
+
+    if (!sel.rangeCount) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents(); // remove selected text if any
+
+    // Create a text node with your text
+    const left = document.createTextNode("["+chord);
+    const right = document.createTextNode("]");
+
+    range.insertNode(left);
+    range.setStartAfter(left);
+    range.setEndAfter(left);
+    range.insertNode(right);
+
+    if(!chord) {
+        range.setStartAfter(left);
+        range.setEndBefore(right);
+    }
+    if(chord) {
+        range.setStartAfter(right);
+        range.setEndAfter(right);
+    }
+
+    // Apply the updated range to the selection
+    sel.removeAllRanges();
+    sel.addRange(range);
 }
 
 function setViewer() {
