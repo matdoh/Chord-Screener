@@ -4,10 +4,11 @@ import {dynamic_text, sleep} from "./inc/utils.js";
 //Global Vars
 const dynamicsearch = document.getElementById('searchv');
 const scrollinput = document.getElementById('AVSpeedSlide');
-const scrollSect = document.getElementById('chordScreen')
-const editSect = document.getElementById('editScreen')
+const scrollSect = document.getElementById('chordScreen');
+const editSect = document.getElementById('editScreen');
 const scaleinput = document.getElementById('ScaleIn');
 const songlist = document.getElementById('songlist');
+const editortextinputs = document.querySelectorAll('#ehead label input[type=text]');
 const Kreuzkey = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
 const bKey = ["A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab"];
 const keyDict = [
@@ -62,6 +63,9 @@ document.getElementById("cbscrbut").addEventListener('click', autoscroll);
 scrollinput.addEventListener('input', update_VA_speed);
 document.getElementById("editbut").addEventListener("click", open_editor);
 document.getElementById("new_song_but").addEventListener("click", open_editor);
+editortextinputs.forEach(input => {
+    addEventListener('input', () => dynamic_text(input));
+});
 
 //guesture control
 scrollSect.addEventListener('wheel', function(event) {
@@ -82,6 +86,41 @@ editSect.addEventListener('wheel', function(event) {
     }
 });
 
+//hotkeys
+document.addEventListener("keydown", (e) => {
+    console.log("keydown");
+    if(current_window === "edit") {
+        console.log("in editor");
+        // New Chord
+        if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+            e.preventDefault();
+            setChordAtCursor();
+            return;
+        }
+        for(let i = 0; i < 10; i++) {
+            let istr = "" + i;
+            if ((e.metaKey || e.ctrlKey) && e.key === istr) {
+                e.preventDefault();
+                setChordAtCursor(document.getElementById("hotchord"+istr).value);
+                return;
+            }
+        }
+
+    }
+
+    // Shift + N
+    if (e.shiftKey && e.key === "n") {
+        e.preventDefault();
+        console.log("New item shortcut triggered!");
+
+        return;
+    }
+
+    // if
+
+});
+
+
 //Funcs
 async function removeUninteresting() {
     let roledata = [0,0,0];
@@ -92,12 +131,12 @@ async function removeUninteresting() {
             }
             let res;
             res = response.json();
-            console.log(res);
+            //console.log(res);
             return res;
         })
         .then(data => {
             roledata = data;
-            console.log(roledata);
+            //console.log(roledata);
 
             document.querySelectorAll(".editor").forEach(button => {
                 if(parseInt(data[1]) < 1) {button.setAttribute("style", "display:none;");}
@@ -106,6 +145,37 @@ async function removeUninteresting() {
         .catch(error => {
             console.error('Error:', error);
         });
+}
+
+function setChordAtCursor(chord="") {
+    const sel = window.getSelection();
+
+    if (!sel.rangeCount) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents(); // remove selected text if any
+
+    // Create a text node with your text
+    const left = document.createTextNode("["+chord);
+    const right = document.createTextNode("]");
+
+    range.insertNode(left);
+    range.setStartAfter(left);
+    range.setEndAfter(left);
+    range.insertNode(right);
+
+    if(!chord) {
+        range.setStartAfter(left);
+        range.setEndBefore(right);
+    }
+    if(chord) {
+        range.setStartAfter(right);
+        range.setEndAfter(right);
+    }
+
+    // Apply the updated range to the selection
+    sel.removeAllRanges();
+    sel.addRange(range);
 }
 
 function setViewer() {
@@ -203,6 +273,7 @@ function open_song() {
     document.getElementById('sauth').innerHTML = '';
     document.getElementById('stitle').innerHTML = '';
     document.getElementById('saltt').innerHTML = '';
+    document.getElementById('scapo').innerHTML = 'Capo:&nbsp;&nbsp;&nbsp;0'
     const body = document.getElementById('sbody');
     if(body !== null) {body.remove();}
 
@@ -294,6 +365,9 @@ function open_editor() {
     document.getElementById("discardbut").addEventListener("click", discard_song);
     document.getElementById("extendbut").addEventListener("click", add_epart);
     document.getElementById("deletebut").addEventListener("click", remove_song);
+    editortextinputs.forEach(inp => {
+        dynamic_text(inp);
+    })
 }
 
 function generate_editor_body() {
@@ -397,6 +471,7 @@ function rem_epart(id) {
         if (parseInt(epart.dataset.id) < id) {
         } else if(parseInt(epart.dataset.id) === id) {
             epart.remove();
+            editor_len--;
         } else {
             let new_id = parseInt(epart.dataset.id)-1;
             epart.setAttribute("data-id", new_id);
@@ -427,27 +502,25 @@ async function save_song() {
         let parttuple = [];
         let texts = document.querySelector(`.epart[data-id="${i}"] .hstack .textvstack`);
 
-        //console.log(texts);
-
         const ptitle = texts.querySelector('.ebptitle').textContent;
-        const pcontentraw = texts.querySelector('.ebpcontent').innerHTML
-            .replaceAll("</div><div>", "\n")
-            .replace("</div>", "");
-        let pcontent
-        if(pcontentraw.startsWith("<div>")) {
-            pcontent = pcontentraw.replace("<div>", "")
-        } else {
-            pcontent = pcontentraw.replace("<div>", "\n");
-        }
-        pcontent = pcontent.replaceAll("&nbsp;\n", "\n");
+        const pcontent2 = texts.querySelector('.ebpcontent');
+        let pcontenta = recursive_line_breaker(pcontent2);
+        let pcontents = "";
+        pcontenta.forEach(line => {
+            if(line==="") {line=" ";}
+            pcontents = pcontents + "\n" + line;
+        });
+        pcontents = pcontents.replace("\n", "");
+        pcontents = pcontents.replaceAll("&nbsp;\n", "\n");
+        pcontents = pcontents.replaceAll("&nbsp;", " ");
 
         parttuple.push(ptitle);
-        parttuple.push(pcontent);
-
-        if(ptitle && pcontent) {
+        parttuple.push(pcontents);
+        if(ptitle && pcontents) {
             parts.push(parttuple);
         }
     }
+
     //create deepsearch string
     const etitle = document.querySelector('#etitle').value;
     const ealtt = document.querySelector('#ealtt').value;
@@ -503,6 +576,19 @@ async function save_song() {
     if(current_window === "add") {grab();}
     document.getElementById('editScreen').style.left = '100vw';
     current_window = "chords";
+}
+
+function recursive_line_breaker(parent) {
+    let nodelist = [];
+    for (let i=0; i<parent.childNodes.length; i++) {
+        let node = parent.childNodes[i];
+        if(node.children && node.children.length > 0) {
+            nodelist = [...nodelist, ...recursive_line_breaker(node)];
+        } else {
+            nodelist.push(node.textContent);
+        }
+    }
+    return nodelist;
 }
 
 async function remove_song() {
@@ -643,6 +729,7 @@ function generate_body(parts, commentMatrix) {
                 }
             }
 
+            //COMMENT LINE
             if(line.charAt(0) === '(' && line.charAt(line.length - 1) === ')') {
                 const pline = document.createElement('div');
                 pline.className = "pline";
@@ -652,6 +739,33 @@ function generate_body(parts, commentMatrix) {
                     .replaceAll('[', '<span class="commentChord">')
                     .replaceAll(']', '</span>');
                 pline.appendChild(plinet);
+                ppart.appendChild(pline);
+                return;
+            }
+
+            //TEXT LINE
+            if(line.replace("[", "") === line) {
+                const pline = document.createElement('div');
+                pline.className = "pline textpline";
+                const plinet = document.createElement('p');
+                plinet.className = 'microtext textline';
+                plinet.textContent = line;
+                pline.appendChild(plinet);
+                ppart.appendChild(pline);
+                return;
+            }
+
+            //CHORDLINE
+            if(line.replace(new RegExp("\\[.*?\\]", "g"), "") === "") {
+                const pline = document.createElement('div');
+                pline.className = "pline";
+                let chordarr = Array.from(line.matchAll(/\[([^\]]+)\]/g), m => m[1]);
+                for(let i=0; i<chordarr.length; i++) {
+                    const chord = document.createElement('p');
+                    chord.className = 'chord';
+                    chord.textContent = chordarr[i];
+                    pline.appendChild(chord);
+                }
                 ppart.appendChild(pline);
                 return;
             }
@@ -731,13 +845,13 @@ async function zoom() {
 
     document.querySelectorAll('.pline').forEach(parag => {
         parag.style.fontSize = `${scale * 16}px`;
-        parag.style.marginBottom = `${(1/(0.5*scale+0.5)) * 12.8}px`
+        parag.style.marginBottom = `${(1/(0.3*scale+0.7)) * 12.8}px`
     });
     document.querySelectorAll('h4').forEach(parag => {
         parag.style.fontSize = `${scale * 28.8}px`;
     });
     document.querySelectorAll('.microblock').forEach(parag => {
-        parag.style.height = `${(1.2 * scale - 0.2) * 64}px`;
+        parag.style.height = `${(1.4 * scale - 0.4) * 64}px`;
     });
     document.querySelectorAll('.spacebehind').forEach(parag => {
         parag.style.marginRight = `${scale * 7}px`;
@@ -763,7 +877,12 @@ function transpose(keyShift, capotune = false) {
     document.getElementById('skey').textContent = 'Tonart: ' + keyDict[actualKey][0]/* + ` (${actualKey})`*/;
     if(capotune) {
         capopos = (capopos + (12 - keyShift)) % 12;
-        document.getElementById('scapo').innerHTML = 'Capo:&nbsp;&nbsp;&nbsp;' + capopos;
+        if(capopos<=9) {
+            document.getElementById('scapo').innerHTML = 'Capo:&nbsp;&nbsp;&nbsp;' + capopos;
+        } else {
+            document.getElementById('scapo').innerHTML = 'Capo:&nbsp;&nbsp;' + capopos;
+        }
+
     }
 
     //console.log('OldKeys: ' + oldKeys + ", NewKeys: " + newKeys);
@@ -771,6 +890,7 @@ function transpose(keyShift, capotune = false) {
     if(keyShift === 0) {return;}
 
     document.querySelectorAll('.chord').forEach(e => {
+        if(["N.C", "N.C."].includes(e.textContent)) {return;}
         let partial_e = e.textContent.split('/');
         let new_chord = "";
         if(oldKeys === Kreuzkey) {

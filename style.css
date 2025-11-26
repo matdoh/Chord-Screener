@@ -28,6 +28,21 @@ body {
     left: 0;
     top: 0;
 }
+input[type=text], input[type=number] {
+    font-size: 1em;
+    -webkit-appearance: none;
+    padding: 4px;
+    transition: 0.15s;
+    appearance: none;
+    border-radius: 0;
+    border: none;
+    background: none;
+    color: var(--font);
+}
+input[type=text]:focus, input[type=number]:focus {
+    outline: none;
+    border-bottom: 2px solid var(--accent1);
+}
 
 /*LIST-SCREEN*/
 #listScreen {
@@ -197,7 +212,7 @@ body {
 .microblock {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-end;
     /*margin-left: 6px;*/
     height: 4em;
 }
@@ -417,8 +432,55 @@ input[type="number"] {
 #ehead {
     display: flex;
     flex-direction: column;
-    label input[type=text] {
-        width: 100%;
+    gap: 0.5em;
+
+    label {
+        font-family: Raleway, sans-serif;
+        color: var(--font);
+
+        input[type=text] {
+            width: 100%;
+            color: var(--accent1);
+            font-family: "Azeret Mono", monospace;
+            background-color: var(--base2);
+            border-radius: 2px;
+        }
+        input[type=number] {
+            width: 1.5em;
+            font-family: "Azeret Mono", monospace;
+            text-align: center;
+            color: var(--accent1);
+            background-color: var(--base2);
+            border-radius: 2px;
+        }
+    }
+}
+
+#equicknotes {
+    background-color: var(--backlayer);
+    position: sticky;
+    top: 3vh;
+    right: 3vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    opacity: 0.8;
+    float: right;
+    z-index: 100;
+
+    label {
+        font-family: Raleway, sans-serif;
+        color: var(--font);
+        padding: 4px;
+
+        input[type=text] {
+            width: calc(var(--cb-size) * 0.7);
+            color: var(--accent1);
+            font-family: "Azeret Mono", monospace;
+            background-color: var(--base2);
+            border-radius: 2px;
+            margin-left: 4px;
+        }
     }
 }
 
@@ -444,11 +506,12 @@ input[type="number"] {
 
 .ebptitle, .ebpcontent {
     background: var(--base2);
-    border: 1px solid var(--font);
+    /*border: 1px solid var(--font);*/
     color: var(--font);
     font-family: "Azeret Mono", monospace;
     border-radius: 2px;
-    width: 100%;
+    width: 90%;
+    padding: 4px;
 }
 
 .hstack {
