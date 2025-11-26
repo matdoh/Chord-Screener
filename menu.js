@@ -207,6 +207,7 @@ function open_song() {
     document.getElementById('sauth').innerHTML = '';
     document.getElementById('stitle').innerHTML = '';
     document.getElementById('saltt').innerHTML = '';
+    document.getElementById('scapo').innerHTML = 'Capo:&nbsp;&nbsp;&nbsp;0'
     const body = document.getElementById('sbody');
     if(body !== null) {body.remove();}
 
@@ -782,7 +783,12 @@ function transpose(keyShift, capotune = false) {
     document.getElementById('skey').textContent = 'Tonart: ' + keyDict[actualKey][0]/* + ` (${actualKey})`*/;
     if(capotune) {
         capopos = (capopos + (12 - keyShift)) % 12;
-        document.getElementById('scapo').innerHTML = 'Capo:&nbsp;&nbsp;&nbsp;' + capopos;
+        if(capopos<=9) {
+            document.getElementById('scapo').innerHTML = 'Capo:&nbsp;&nbsp;&nbsp;' + capopos;
+        } else {
+            document.getElementById('scapo').innerHTML = 'Capo:&nbsp;&nbsp;' + capopos;
+        }
+
     }
 
     //console.log('OldKeys: ' + oldKeys + ", NewKeys: " + newKeys);
