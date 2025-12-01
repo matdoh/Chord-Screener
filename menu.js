@@ -9,6 +9,7 @@ const scrollSect = document.getElementById('chordScreen');
 const editSect = document.getElementById('editScreen');
 const scaleinput = document.getElementById('ScaleIn');
 const songlist = document.getElementById('songlist');
+const loader = document.getElementById('loading');
 const editortextinputs = document.querySelectorAll('#ehead label input[type=text]');
 const Kreuzkey = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
 const bKey = ["A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab"];
@@ -36,6 +37,7 @@ var currentData;
 var full = false;
 var autoscrollvar = false;
 var AVThresholdStamp = 0;
+var LoadThresholdStamp = 0;
 var GuestureThresholdStamp = 0;
 var scrollspeed = 0;
 var current_window = "list"; // "chords", "edit", "add"
@@ -134,7 +136,18 @@ document.addEventListener("keydown", (e) => {
 
 
 //Funcs
+async function setLoading(to = true) {
+    LoadThresholdStamp = Date.now();
+    if (to) {
+        await sleep(150);
+        if(Date.now() < LoadThresholdStamp + 140) {return;}
+        loader.style.display = 'flex';
+    } else {
+        loader.style.display = 'none';
+    }
+}
 async function removeUninteresting() {
+    setLoading(true);
     let roledata = [0,0,0];
     fetch('API/sql.php?roles=true')
         .then(response => {
@@ -157,6 +170,7 @@ async function removeUninteresting() {
         .catch(error => {
             console.error('Error:', error);
         });
+    setLoading(false);
 }
 
 function setChordAtCursor(chord="") {
@@ -205,6 +219,7 @@ function setWindow(windo) {
     if(["add", "edit"].includes(windo)) {screenbar.style.left = "-200vw";}
 }
 function grab(song = '') {
+    setLoading(true);
     // Define the API URL
     let apiUrl = 'API/sql.php';
     if(song !== '') {apiUrl += '/?song=' + song}
@@ -232,6 +247,7 @@ function grab(song = '') {
                         grab(song[0])
                     })
                 });
+
             } else {
                 //console.log(data.parts);
                 currentData = data;
@@ -239,6 +255,7 @@ function grab(song = '') {
                 currentData.commentMatrix = JSON.parse(currentData.commentMatrix);
                 open_song();
             }
+            setLoading(false);
             //console.log(data);
         })
         .catch(error => {
@@ -505,6 +522,7 @@ function prepare_textarea(text) {
 }
 
 async function save_song() {
+    setLoading(true);
     //setup vars for the api
     let apiUrl = 'API/sql.php';
     let data = {}
@@ -585,9 +603,10 @@ async function save_song() {
         console.error("POST request failed:", error);
     }
 
-    grab(data.name)
     if(current_window === "add") {grab();}
+    else {grab(data.name);}
     setWindow("chords")
+    setLoading(false);
 }
 
 function recursive_line_breaker(parent) {
@@ -604,6 +623,7 @@ function recursive_line_breaker(parent) {
 }
 
 async function remove_song() {
+    setLoading(true)
     let apiUrl = 'API/sql.php';
     let data = {}
     data.action = "delete";
@@ -628,7 +648,8 @@ async function remove_song() {
 
     grab();
     document.getElementById('editScreen').style.left = '100vw';
-    back_to_list();
+    await back_to_list();
+    setLoading(false);
 }
 
 function discard_song() {
