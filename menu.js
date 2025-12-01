@@ -26,6 +26,7 @@ const keyDict = [
     ["G", Kreuzkey],
     ["Ab", bKey]];
 const defscrollspeed = 30;
+const hasTouch = matchMedia("(pointer: coarse)").matches;
 var viewer = "";
 var displayedKey = null;
 var actualKey = null;
@@ -64,6 +65,19 @@ document.getElementById("cbscrbut").addEventListener('click', autoscroll);
 scrollinput.addEventListener('input', update_VA_speed);
 document.getElementById("editbut").addEventListener("click", open_editor);
 document.getElementById("new_song_but").addEventListener("click", open_editor);
+//EXPANDABLE BUTTONS ON TOUCH
+document.addEventListener("touchstart", (e) => {
+    const el = e.target.closest(".extendable");
+
+    // remove old touch hovers
+    document.querySelectorAll(".touch-active")
+        .forEach(x => x.classList.remove("touch-active"));
+
+    if (!el) return;
+
+    // activate hover on the touched element
+    el.classList.add("touch-active");
+});
 editortextinputs.forEach(input => {
     addEventListener('input', () => dynamic_text(input));
 });

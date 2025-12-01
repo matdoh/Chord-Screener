@@ -307,12 +307,13 @@ input[type=text]:focus, input[type=number]:focus {
     /*margin: 3vh 0 0 3vh;*/
 }
 .cbcon {
-    display: block;
+    display: flex;
     border: none;
     font: inherit;
     font-size: 2vh;
     height: var(--cb-size);
-    align-content: center;
+    align-items: center;
+    justify-content: center;
     margin: 0;
 }
 .cbconbut {
@@ -379,7 +380,7 @@ input[type=text]:focus, input[type=number]:focus {
         background-color: var(--base1);
     }
 }
-#autoscrollbut:hover {
+#autoscrollbut:hover, #autoscrollbut.touch-active {
     .cbcon {
         display: none;
     }
@@ -387,21 +388,21 @@ input[type=text]:focus, input[type=number]:focus {
         display: block;
     }
 }
-.chordbutton:hover {
+.chordbutton:hover, .chordbutton.touch-active {
     .cbconbut, .cbexa {
         display: block;
     }
 }
-#darkmodebut:hover {
+#darkmodebut:hover, #darkmodebut.touch-active {
     height: 13.25vh; /*6.5vh def + 2*2.5vh cbexa + 1.75vh lower bar */
 }
-#genzoombut:hover {
+#genzoombut:hover, #genzoombut.touch-active {
     height: calc((var(--cb-size) * 1.5) + var(--cbrange-len) - (var(--cbrange-fat) * 0.5)); /*6.5vh def + 15vh range + 3.25vh lower bar*/
     .cbin {
         display: block;
     }
 }
-#genscrollbut:hover {
+#genscrollbut:hover, #genscrollbut.touch-active {
     height: calc((var(--cb-size) * 1.5) + var(--cbrange-len) - (var(--cbrange-fat) * 0.5)); /*6.5vh def + 15vh range + 3.25vh lower bar*/
     .cbin {
         display: block;
