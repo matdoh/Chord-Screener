@@ -67,6 +67,9 @@ document.getElementById("cbscrbut").addEventListener('click', autoscroll);
 scrollinput.addEventListener('input', update_VA_speed);
 document.getElementById("editbut").addEventListener("click", open_editor);
 document.getElementById("new_song_but").addEventListener("click", open_editor);
+
+let ekey = document.getElementById("ekey");
+ekey.addEventListener("input", () => setDefQuickChords(ekey.value));
 //EXPANDABLE BUTTONS ON TOUCH
 document.addEventListener("touchstart", (e) => {
     const el = e.target.closest(".extendable");
@@ -105,9 +108,7 @@ editSect.addEventListener('wheel', function(event) {
 
 //hotkeys
 document.addEventListener("keydown", (e) => {
-    console.log("keydown");
     if(current_window === "edit") {
-        console.log("in editor");
         // New Chord
         if ((e.metaKey || e.ctrlKey) && e.key === "k") {
             e.preventDefault();
@@ -118,7 +119,13 @@ document.addEventListener("keydown", (e) => {
             let istr = "" + i;
             if ((e.metaKey || e.ctrlKey) && e.key === istr) {
                 e.preventDefault();
-                setChordAtCursor(document.getElementById("hotchord"+istr).value);
+                let nchf = document.getElementById("hotchord"+istr)
+                if(nchf.value) {
+                    setChordAtCursor(nchf.value);
+                } else {
+                    setChordAtCursor(nchf.placeholder);
+                }
+
                 return;
             }
         }
@@ -136,6 +143,26 @@ document.addEventListener("keydown", (e) => {
 
 
 //Funcs
+function setDefQuickChords(scale) {
+    if(!(scale < 12 && scale >= 0)) {return;}
+    //IDEE (A): [A, E, F#m, D, C#m, Bm, ., ., ., N.C.]
+    let keys = keyDict[scale][1].slice(scale).concat(keyDict[scale][1].slice(0, scale));
+    let back = [keys[0]];
+    back[1] = keys[7];
+    back[2] = keys[9]+"m";
+    back[3] = keys[5];
+    back[5] = keys[4]+"m";
+    back[4] = keys[2]+"m";
+    back[6] = "";
+    back[7] = "";
+    back[8] = "";
+    back[9] = "N.C.";
+
+    const quickchords = document.querySelectorAll("#equicknotes label input[type=text]");
+    for (let i = 0; i < 10; i++) {
+        quickchords[i].placeholder = back[i];
+    }
+}
 async function setLoading(to = true) {
     LoadThresholdStamp = Date.now();
     if (to) {
@@ -146,6 +173,7 @@ async function setLoading(to = true) {
         loader.style.display = 'none';
     }
 }
+
 async function removeUninteresting() {
     setLoading(true);
     let roledata = [0,0,0];
@@ -218,6 +246,7 @@ function setWindow(windo) {
     if(windo==="chords") {screenbar.style.left = "-100vw";}
     if(["add", "edit"].includes(windo)) {screenbar.style.left = "-200vw";}
 }
+
 function grab(song = '') {
     setLoading(true);
     // Define the API URL
@@ -353,6 +382,7 @@ function open_editor() {
         document.getElementById('ekey').value = currentData.key;
         document.getElementById('ekeyshift').value = currentData.KeyShift;
         document.getElementById('ecapo').value = currentData.Capo;
+        setDefQuickChords(currentData.key);
         generate_editor_body();
     } else if(current_window === "list") {
         setWindow("add");
@@ -363,6 +393,7 @@ function open_editor() {
         document.getElementById('ekey').value = 0;
         document.getElementById('ekeyshift').value = 0;
         document.getElementById('ecapo').value = 0;
+        setDefQuickChords(0);
         let ebody = document.getElementById('ebody');
         ebody.innerHTML = `<div class="epart" data-id="0">                   
                                 <div class="hstack">
