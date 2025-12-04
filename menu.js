@@ -34,6 +34,7 @@ var actualKey = null;
 var capopos = 0;
 var textmode = -1;
 var currentData;
+var allSongNodes; //[{node, title, height, width}, {}]
 var full = false;
 var autoscrollvar = false;
 var AVThresholdStamp = 0;
@@ -67,6 +68,7 @@ document.getElementById("cbscrbut").addEventListener('click', autoscroll);
 scrollinput.addEventListener('input', update_VA_speed);
 document.getElementById("editbut").addEventListener("click", open_editor);
 document.getElementById("new_song_but").addEventListener("click", open_editor);
+document.getElementById("aiosbut").addEventListener("click", allInOneScreen);
 
 let ekey = document.getElementById("ekey");
 ekey.addEventListener("input", () => setDefQuickChords(ekey.value));
@@ -143,6 +145,81 @@ document.addEventListener("keydown", (e) => {
 
 
 //Funcs
+function updateSongNodes() {
+    if (current_window !== "chords") {return;}
+
+    allSongNodes = [];
+    let blocks = document.querySelectorAll("#sbody .ppart");
+    for (let i = 0; i < blocks.length; i++) {
+        let clone = blocks[i].cloneNode(true);
+        allSongNodes[i] = {
+            node: clone,
+            title: clone.querySelector("h4").textContent,
+            width: getComputedStyle(blocks[i]).width,
+            height: getComputedStyle(blocks[i]).height,
+        };
+    }
+}
+function closeAIOScreen() {
+    let screen = document.querySelector("#allinoneframe");
+    screen.style.display = "none";
+    screen.innerHTML = '<div id="closeallscreenbut" class="chordbutton">\n' +
+        '        <div class="cbcon"><=</div>\n' +
+        '    </div>\n' +
+        '    <h2></h2>\n' +
+        '    <div id="allinone"></div>';
+}
+function allInOneScreen() {
+    //get my nodes
+    updateSongNodes();
+    let cutSongNodes = [];
+    let tmptitles = [];
+    const allScreen = document.getElementById("allinone");
+
+    //setup allscreen for algo
+    allScreen.parentElement.style.opacity = "0";
+    allScreen.parentElement.style.display = "block";
+
+    allSongNodes.forEach(node => {
+        if(tmptitles.includes(node.title)) {return;}
+        tmptitles.push(node.title);
+        cutSongNodes.push(node.node);
+    });
+    cutSongNodes.forEach(node => {
+        node.style.zoom = "1";
+        allScreen.appendChild(node);
+    });
+    //set header
+    document.querySelector("#allinoneframe h2").textContent = currentData.name;
+
+    //start scaling
+    var columnWidth = 0;
+    for (var i = 0; i < allSongNodes.length; i++) {
+        let widthi = parseFloat((allSongNodes[i].width).slice(0, -2));
+        if (widthi > columnWidth) {
+            columnWidth = widthi;
+        }
+    }
+    for(let i = 0; i < 1000; i++) {
+        //kill if working
+        if(allScreen.scrollHeight > allScreen.clientHeight) {
+            //console.log("height overflow");
+        } else if(allScreen.scrollWidth > allScreen.clientWidth) {
+            //console.log("width overflow");
+        } else {break;}
+        //scale down
+        cutSongNodes.forEach(node => {
+            node.style.zoom = (parseFloat(node.style.zoom) * 0.95).toString();
+        });
+        columnWidth *= 0.95;
+        //try adding a column
+        const containerWidth = allScreen.clientWidth;
+        let columnCount = Math.floor(containerWidth / (columnWidth));
+        allScreen.style.columnCount = columnCount.toString();
+    }
+    document.getElementById("closeallscreenbut").addEventListener("click", closeAIOScreen);
+    allScreen.parentElement.style.opacity = "1";
+}
 function setDefQuickChords(scale) {
     if(!(scale < 12 && scale >= 0)) {return;}
     //IDEE (A): [A, E, F#m, D, C#m, Bm, ., ., ., N.C.]
@@ -173,7 +250,6 @@ async function setLoading(to = true) {
         loader.style.display = 'none';
     }
 }
-
 async function removeUninteresting() {
     setLoading(true);
     let roledata = [0,0,0];
@@ -901,8 +977,7 @@ function partseperator(content, startv='{c: ', endv ='}') {
     });
     return backarr;
 }
-
-async function zoom() {
+function zoom() {
     let scale = document.getElementById('ScaleIn').value;
 
     document.querySelectorAll('.pline').forEach(parag => {
@@ -926,7 +1001,7 @@ async function zoom() {
     });
 
     if(autoscrollvar) {
-        await update_VA_speed()
+        update_VA_speed()
     }
 }
 
