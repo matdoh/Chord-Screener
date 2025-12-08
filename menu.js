@@ -110,8 +110,13 @@ editSect.addEventListener('wheel', function(event) {
 
 //hotkeys
 document.addEventListener("keydown", (e) => {
+    //ALWAYS ACTIVE
+    //fullscreen, darkmode (f, c)
+    if(e.key==="f") {fullscreen(); return;}
+    if(e.key==="c") {flip_darkmode(); return;}
+    //ONLY IN EDIT
     if(current_window === "edit") {
-        // New Chord
+        // New Chord (cmd+k / cmd+num)
         if ((e.metaKey || e.ctrlKey) && e.key === "k") {
             e.preventDefault();
             setChordAtCursor();
@@ -132,6 +137,33 @@ document.addEventListener("keydown", (e) => {
             }
         }
 
+        //ONLY IN CHORDS
+    } else if (current_window === "chords") {
+        //Transpose ((+/-)(+shift))
+        if(e.key === "+") {transpose(1); return;}
+        if(e.key === "-") {transpose(11); return;}
+        //Text-mode, aio (t, x)
+        if(e.key==="t") {flip_textmode(); return;}
+        if(e.key==="x") {allInOneScreen(); return;}
+        //zoom (i, o)
+        if(e.key==="i") {
+            scaleinput.value=(parseFloat(scaleinput.value)+0.1).toString();
+            zoom(); return;
+        }
+        if(e.key==="o") {
+            scaleinput.value=(parseFloat(scaleinput.value)-0.1).toString();
+            zoom(); return;
+        }
+        //autoscroll (space, d, s)
+        if(e.key===" ") {e.preventDefault(); autoscroll(); return;}
+        if(e.key==="d") {
+            scrollinput.value=(parseFloat(scrollinput.value)+5).toString();
+            update_VA_speed(); return;
+        }
+        if(e.key==="s") {
+            scrollinput.value=(parseFloat(scrollinput.value)-5).toString();
+            update_VA_speed(); return;
+        }
     }
     // Shift + N
     if (e.shiftKey && e.key === "n") {
