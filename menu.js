@@ -110,7 +110,7 @@ editSect.addEventListener('wheel', function(event) {
 
 //hotkeys
 document.addEventListener("keydown", (e) => {
-    if(current_window === "edit") {
+    if(current_window === "edit" || current_window === "add") {
         // New Chord
         if ((e.metaKey || e.ctrlKey) && e.key === "k") {
             e.preventDefault();
