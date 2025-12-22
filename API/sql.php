@@ -55,6 +55,7 @@ switch ($methode) {
 
         if ($data["action"] == "edit") {
             allow_by_role("Editor");
+            if(!$data["name"]) {die("name must not be empty");}
             $editsql = $con->prepare("UPDATE `songs` SET `name` = ?, `subTitle` = ?, `author` = ?, `key` = ?, `KeyShift` = ?, `Capo` = ?, `parts` = ?, `Deepsearch` = ?, `Copyright` = ? WHERE `songs`.`Id` = ?;");
             if ($editsql) {
                 $editsql->bind_param("sssiiisssi", $data["name"], $data["altt"], $data["auth"], $data["key"], $data["keyshift"], $data["capo"], $data["parts"], $data["deepsearch"], $data["copyr"], $data["id"]);

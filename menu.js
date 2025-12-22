@@ -319,7 +319,7 @@ function setViewer() {
 function setWindow(windo) {
     current_window = windo;
     if(windo==="list") {screenbar.style.left = "0";}
-    if(windo==="chords") {screenbar.style.left = "-100vw";}
+    if(windo==="chords") {screenbar.style.left = "-100vw"; setLoading(false);}
     if(["add", "edit"].includes(windo)) {screenbar.style.left = "-200vw";}
 }
 
@@ -629,6 +629,8 @@ function prepare_textarea(text) {
 }
 
 async function save_song() {
+    const etitle = document.querySelector('#etitle').value;
+    if(!etitle) {alert("need title"); return}
     setLoading(true);
     //setup vars for the api
     let apiUrl = 'API/sql.php';
@@ -642,14 +644,9 @@ async function save_song() {
 
         const ptitle = texts.querySelector('.ebptitle').textContent;
         const pcontent2 = texts.querySelector('.ebpcontent');
-        let pcontenta = recursive_line_breaker(pcontent2);
+        let pcontenta = pcontent2.innerText;
         let pcontents = "";
-        pcontenta.forEach(line => {
-            if(line==="") {line=" ";}
-            pcontents = pcontents + "\n" + line;
-        });
-        pcontents = pcontents.replace("\n", "");
-        pcontents = pcontents.replaceAll("&nbsp;\n", "\n");
+        pcontents = pcontenta.replaceAll("&nbsp;\n", "\n");
         pcontents = pcontents.replaceAll("&nbsp;", " ");
 
         parttuple.push(ptitle);
@@ -660,7 +657,6 @@ async function save_song() {
     }
 
     //create deepsearch string
-    const etitle = document.querySelector('#etitle').value;
     const ealtt = document.querySelector('#ealtt').value;
     const eauth = document.querySelector('#eauth').value;
     const ecopyr = document.querySelector('#ecopyr').value;
@@ -710,23 +706,10 @@ async function save_song() {
         console.error("POST request failed:", error);
     }
 
-    if(current_window === "add") {grab();}
-    else {grab(data.name);}
-    setWindow("chords")
     setLoading(false);
-}
+    if(current_window === "add") {setWindow("list"); grab();}
+    else {setWindow("chords"); grab(data.name);}
 
-function recursive_line_breaker(parent) {
-    let nodelist = [];
-    for (let i=0; i<parent.childNodes.length; i++) {
-        let node = parent.childNodes[i];
-        if(node.children && node.children.length > 0) {
-            nodelist = [...nodelist, ...recursive_line_breaker(node)];
-        } else {
-            nodelist.push(node.textContent);
-        }
-    }
-    return nodelist;
 }
 
 async function remove_song() {
