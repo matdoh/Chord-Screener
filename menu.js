@@ -414,14 +414,20 @@ function open_song() {
     document.getElementById('sauth').innerHTML = '';
     document.getElementById('stitle').innerHTML = '';
     document.getElementById('saltt').innerHTML = '';
+    document.getElementById('skey').innerHTML = '';
+    document.getElementById('stemp').innerHTML = '';
     document.getElementById('scapo').innerHTML = 'Capo:&nbsp;&nbsp;&nbsp;0'
     const body = document.getElementById('sbody');
     if(body !== null) {body.remove();}
 
+    let bpmstring = 'BPM: &nbsp;';
+    if(currentData.tempo<100) {bpmstring+=' ';}
+    bpmstring += currentData.tempo;
     //console.log("Song: " + currentData.name + ", Key: " + currentData.key + ", KeyShift: " + currentData.KeyShift + ", Capo: " + currentData.Capo);
     document.getElementById('sauth').appendChild(document.createTextNode(currentData.author));
     document.getElementById('stitle').appendChild(document.createTextNode(currentData.name));
     document.getElementById('saltt').appendChild(document.createTextNode(currentData.subTitle));
+    document.getElementById('stemp').innerHTML=bpmstring;
     generate_body(currentData.parts, currentData.commentMatrix);
     transpose(currentData.KeyShift);
     if(currentData.Capo !== 0) {transpose(12-(currentData.Capo % 12), true);}
@@ -440,6 +446,7 @@ async function back_to_list() {
     document.getElementById('sauth').innerHTML = '';
     document.getElementById('stitle').innerHTML = '';
     document.getElementById('saltt').innerHTML = '';
+    document.getElementById('stemp').innerHTML = '';
     const body = document.getElementById('sbody');
     if(body !== null) {body.remove();}
 }
@@ -455,6 +462,7 @@ function open_editor() {
         document.getElementById('etitle').value = currentData.name;
         document.getElementById('ealtt').value = currentData.subTitle;
         document.getElementById('ecopyr').value = currentData.Copyright;
+        document.getElementById('etemp').value = currentData.tempo;
         document.getElementById('ekey').value = currentData.key;
         document.getElementById('ekeyshift').value = currentData.KeyShift;
         document.getElementById('ecapo').value = currentData.Capo;
@@ -466,6 +474,7 @@ function open_editor() {
         document.getElementById('etitle').value = '';
         document.getElementById('ealtt').value = '';
         document.getElementById('ecopyr').value = '';
+        document.getElementById('etemp').value = 120;
         document.getElementById('ekey').value = 0;
         document.getElementById('ekeyshift').value = 0;
         document.getElementById('ecapo').value = 0;
@@ -660,6 +669,7 @@ async function save_song() {
     const ealtt = document.querySelector('#ealtt').value;
     const eauth = document.querySelector('#eauth').value;
     const ecopyr = document.querySelector('#ecopyr').value;
+    const etemp = document.querySelector('#etemp').value;
     const verselines = (parts.find(d => ["Verse", "Verse 1", "Strophe", "Strophe 1"].includes(d[0])) || ["", ""])[1].slice(0, 40);
     const choruslines = (parts.find(d => ["Chorus", "Refrain"].includes(d[0])) || ["", ""])[1].slice(0, 40);
     let deepsearch = etitle + "\n" + ealtt + "\n" + eauth + "\n" + verselines + "\n" + choruslines;
@@ -671,7 +681,8 @@ async function save_song() {
     data.name = etitle;
     data.altt = ealtt;
     data.auth = eauth;
-    data.copyr = ecopyr
+    data.copyr = ecopyr;
+    data.tempo = etemp;
     data.key = document.querySelector('#ekey').value;
     data.keyshift = document.querySelector('#ekeyshift').value;
     data.capo = document.querySelector('#ecapo').value;

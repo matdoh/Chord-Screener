@@ -243,7 +243,7 @@ input[type=text]:focus, input[type=number]:focus {
     margin: 1.5em 0 0 0;
     color: var(--font);
 }
-#scapo {
+#scapo, #stemp {
     font-family: 'Azaret Mono', monospace;
     font-size: 1em;
     margin: 0;
@@ -507,7 +507,7 @@ input[type="number"] {
             border-radius: 2px;
         }
         input[type=number] {
-            width: 1.5em;
+            width: 2em;
             font-family: "Azeret Mono", monospace;
             text-align: center;
             color: var(--accent1);

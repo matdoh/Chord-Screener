@@ -189,10 +189,11 @@ Italic rows are currently not used
     <td>...</td>
     <td>s</td>
 </tr>
-<tr class="tilted">
+<tr>
     <td>timeSig</td>
-    <td>Varchar(1)</td>
-    <td>no clue</td>
+    <td>Int(8)</td>
+    <td>Tempo in BPM</td>
+    <td>i</td>
 </tr>
 <tr class="tilted">
     <td>type</td>

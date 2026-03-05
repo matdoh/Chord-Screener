@@ -12,10 +12,11 @@ class song
     private $key;
     private $name;
     private $subTitle;
+    private $tempo;
     private $parts;
     private $commentMatrix;
 
-    public function __construct($Capo, $Copyright, $Deepsearch, $Duration, $Id, $KeyShift, $Zoom, $author, $key, $name, $subTitle, $parts, $commentMatrix) { //from songbookpro-json
+    public function __construct($Capo, $Copyright, $Deepsearch, $Duration, $Id, $KeyShift, $Zoom, $author, $key, $name, $subTitle, $tempo, $parts, $commentMatrix) { //from songbookpro-json
         $this->Capo = $Capo;
         $this->Copyright = $Copyright;
         $this->Deepsearch = $Deepsearch;
@@ -27,6 +28,7 @@ class song
         $this->key = $key;
         $this->name = $name;
         $this->subTitle = $subTitle;
+        $this->tempo = $tempo;
         $this->parts = $parts;
         $this->commentMatrix = $commentMatrix;
     }
@@ -34,12 +36,12 @@ class song
     public static function newFromDatabase($Id) {
         global $con;
         require_once "../define_con.php";
-        $sql = $con->prepare("SELECT `Capo`, `Copyright`, `Deepsearch`, `Duration`, `Id`, `KeyShift`, `Zoom`, `author`, `key`, `name`, `subTitle`, `parts`, `commentMatrix` FROM `songs` WHERE `Id` = ?");
+        $sql = $con->prepare("SELECT `Capo`, `Copyright`, `Deepsearch`, `Duration`, `Id`, `KeyShift`, `Zoom`, `author`, `key`, `name`, `subTitle`, `timeSig`, `parts`, `commentMatrix` FROM `songs` WHERE `Id` = ?");
         $sql->bind_param("i", $Id);
         $sql->execute();
-        $sql->bind_result($capo, $copyright, $deepsearch, $duration, $id, $keyshift, $zoom, $author, $key, $name, $subTitle, $parts, $commentMatrix);
+        $sql->bind_result($capo, $copyright, $deepsearch, $duration, $id, $keyshift, $zoom, $author, $key, $name, $subTitle, $tempo, $parts, $commentMatrix);
         while ($sql->fetch()) {
-            return new song($capo, $copyright, $deepsearch, $duration, $id, $keyshift, $zoom, $author, $key, $name, $subTitle, $parts, $commentMatrix);
+            return new song($capo, $copyright, $deepsearch, $duration, $id, $keyshift, $zoom, $author, $key, $name, $subTitle, $tempo, $parts, $commentMatrix);
         }
         return null;
     }
@@ -47,12 +49,12 @@ class song
     public static function newFromDatabaseByName($name) {
         global $con;
         require_once "../define_con.php";
-        $sql = $con->prepare("SELECT `Capo`, `Copyright`, `Deepsearch`, `Duration`, `Id`, `KeyShift`, `Zoom`, `author`, `key`, `name`, `subTitle`, `parts`, `commentMatrix` FROM `songs` WHERE `name` = ?");
+        $sql = $con->prepare("SELECT `Capo`, `Copyright`, `Deepsearch`, `Duration`, `Id`, `KeyShift`, `Zoom`, `author`, `key`, `name`, `subTitle`, `timeSig`, `parts`, `commentMatrix` FROM `songs` WHERE `name` = ?");
         $sql->bind_param("s", $name);
         $sql->execute();
-        $sql->bind_result($capo, $copyright, $deepsearch, $duration, $id, $keyshift, $zoom, $author, $key, $name, $subTitle, $parts, $commentMatrix);
+        $sql->bind_result($capo, $copyright, $deepsearch, $duration, $id, $keyshift, $zoom, $author, $key, $name, $subTitle, $tempo, $parts, $commentMatrix);
         while ($sql->fetch()) {
-            return new song($capo, $copyright, $deepsearch, $duration, $id, $keyshift, $zoom, $author, $key, $name, $subTitle, $parts, $commentMatrix);
+            return new song($capo, $copyright, $deepsearch, $duration, $id, $keyshift, $zoom, $author, $key, $name, $subTitle, $tempo, $parts, $commentMatrix);
         }
         return null;
     }
@@ -70,6 +72,7 @@ class song
         $data["key"] = $this->key;
         $data["name"] = $this->name;
         $data["subTitle"] = $this->subTitle;
+        $data["tempo"] = $this->tempo;
         $data["parts"] = $this->parts;
         $data["commentMatrix"] = $this->commentMatrix;
         return json_encode($data);
