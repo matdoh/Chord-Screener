@@ -10,6 +10,7 @@ const editSect = document.getElementById('editScreen');
 const scaleinput = document.getElementById('ScaleIn');
 const songlist = document.getElementById('songlist');
 const loader = document.getElementById('loading');
+const metrbut = document.getElementById('metrbut');
 const editortextinputs = document.querySelectorAll('#ehead label input[type=text]');
 const Kreuzkey = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
 const bKey = ["A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab"];
@@ -44,6 +45,7 @@ var scrollspeed = 0;
 var current_window = "list"; // "chords", "edit", "add"
 var editor_len = 0;
 var editor_comments = {}
+var metronome = false;
 
 //INITIALIZE SITE
 //Start-functions
@@ -69,6 +71,7 @@ scrollinput.addEventListener('input', update_VA_speed);
 document.getElementById("editbut").addEventListener("click", open_editor);
 document.getElementById("new_song_but").addEventListener("click", open_editor);
 document.getElementById("aiosbut").addEventListener("click", allInOneScreen);
+metrbut.addEventListener("click", start_metronome);
 
 let ekey = document.getElementById("ekey");
 ekey.addEventListener("input", () => setDefQuickChords(ekey.value));
@@ -250,6 +253,31 @@ async function setLoading(to = true) {
         loader.style.display = 'none';
     }
 }
+
+async function start_metronome() {
+    console.log("Starting metronome");
+    metrbut.removeEventListener("click", start_metronome);
+    metrbut.addEventListener("click", stop_metronome);
+    metronome = true;
+    let temp = 1000/(currentData.tempo/60);
+    var interval = setInterval(async () => {
+        if (metronome === false) {
+            clearInterval(interval);
+        }
+        console.log("click on");
+        metrbut.style = 'background-color:#44CC44;';
+        await sleep(temp / 2);
+        console.log("click off");
+        metrbut.style = 'background-color:inherit';
+    }, temp);
+}
+async function stop_metronome() {
+    console.log("Stopping metronome");
+    metrbut.removeEventListener("click", stop_metronome);
+    metrbut.addEventListener("click", start_metronome);
+    metronome = false;
+}
+
 async function removeUninteresting() {
     setLoading(true);
     let roledata = [0,0,0];
