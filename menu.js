@@ -22,7 +22,7 @@ const keyDict = [
     ["D", Kreuzkey],
     ["Eb", bKey],
     ["E", Kreuzkey],
-    ["F#", Kreuzkey],
+    ["F", bKey],
     ["Gb", bKey],
     ["G", Kreuzkey],
     ["Ab", bKey]];
