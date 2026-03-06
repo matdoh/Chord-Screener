@@ -25,6 +25,75 @@ global $con;
 $con = new mysqli($servername, $user, $pw, $db);
 $con->set_charset("utf8");
 ```
+<h2>HotKeys</h2>
+<table>
+<th>on screens</th><th>key</th><th>functionality</th>
+<tr>
+    <td>ALL</td>
+    <td>C</td>
+    <td>flips between dark- and lightmode</td>
+</tr>
+<tr>
+    <td>ALL</td>
+    <td>F</td>
+    <td>enters full screen</td>
+</tr>
+<tr>
+    <td>edit</td>
+    <td>[cmd, strg] + [1, ..., 0]</td>
+    <td>inserts the quick chord associated with the selected number at cursor</td>
+</tr>
+<tr>
+    <td>edit</td>
+    <td>[cmd, strg] + K</td>
+    <td>inserts the chord brackets around the cursor</td>
+</tr>
+<tr>
+    <td>chords</td>
+    <td>space</td>
+    <td>toggle autoscroll</td>
+</tr>
+<tr>
+    <td>chords</td>
+    <td>+</td>
+    <td>transpose up</td>
+</tr>
+<tr>
+    <td>chords</td>
+    <td>-</td>
+    <td>transpose down</td>
+</tr>
+<tr>
+    <td>chords</td>
+    <td>D</td>
+    <td>speed up autoscroll</td>
+</tr>
+<tr>
+    <td>chords</td>
+    <td>I</td>
+    <td>zooms in</td>
+</tr>
+<tr>
+    <td>chords</td>
+    <td>O</td>
+    <td>zooms out</td>
+</tr>
+<tr>
+    <td>chords</td>
+    <td>S</td>
+    <td>slow autoscroll down</td>
+</tr>
+<tr>
+    <td>chords</td>
+    <td>T</td>
+    <td>(de-)activates the text-only mode</td>
+</tr>
+<tr>
+    <td>chords</td>
+    <td>X</td>
+    <td>opens the All-In-One-Screen</td>
+</tr>
+</table>
 <h2>Database Structure</h2>
 Italic rows are currently not used
 <h3>songs</h3>
