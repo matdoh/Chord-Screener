@@ -46,6 +46,7 @@ var current_window = "list"; // "chords", "edit", "add"
 var editor_len = 0;
 var editor_comments = {}
 var metronome = false;
+var commenting = false;
 
 //INITIALIZE SITE
 //Start-functions
@@ -180,6 +181,20 @@ document.addEventListener("keydown", (e) => {
 
 
 //Funcs
+function startCommenting() {
+    //TODO: Flip setup of comment button
+
+    let pparts = document.getElementsByClassName("ppart");
+    let commentlocs = [];
+    for (let i = 0; i < pparts.length; i++) {
+        for (let ii = 0; ii < pparts[i].childNodes.length; ii++) {
+            const commentloc = document.createElement("div");
+            commentloc.classList.add("commentloc");
+            commentloc.innerHTML = `<label><input type='text' name='comment-${i}-${ii}'></label>`;
+            pparts.insertBefore(pparts[i], pparts[i].childNodes[ii]);
+        }
+    }
+}
 function updateSongNodes() {
     if (current_window !== "chords") {return;}
 
@@ -285,7 +300,6 @@ async function setLoading(to = true) {
         loader.style.display = 'none';
     }
 }
-
 async function start_metronome() {
     console.log("Starting metronome");
     metrbut.removeEventListener("click", start_metronome);
@@ -309,7 +323,6 @@ async function stop_metronome() {
     metrbut.addEventListener("click", start_metronome);
     metronome = false;
 }
-
 async function removeUninteresting() {
     setLoading(true);
     let roledata = [0,0,0];
@@ -336,7 +349,6 @@ async function removeUninteresting() {
         });
     setLoading(false);
 }
-
 function setChordAtCursor(chord="") {
     const sel = window.getSelection();
 
@@ -367,7 +379,6 @@ function setChordAtCursor(chord="") {
     sel.removeAllRanges();
     sel.addRange(range);
 }
-
 function setViewer() {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ref=`);
@@ -375,14 +386,12 @@ function setViewer() {
         viewer = parts.pop().split(';').shift();
     }
 }
-
 function setWindow(windo) {
     current_window = windo;
     if(windo==="list") {screenbar.style.left = "0";}
     if(windo==="chords") {screenbar.style.left = "-100vw"; setLoading(false);}
     if(["add", "edit"].includes(windo)) {screenbar.style.left = "-200vw";}
 }
-
 function grab(song = '') {
     setLoading(true);
     // Define the API URL
@@ -427,7 +436,6 @@ function grab(song = '') {
             console.error('Error:', error);
         });
 }
-
 function create_songnode(song) {
     const songnode = document.createElement("div");
     songnode.className = "songnode";
@@ -449,7 +457,6 @@ function create_songnode(song) {
 
     return songnode;
 }
-
 function search() {
     dynamic_text(dynamicsearch);
     //implementing search behavior
@@ -464,7 +471,6 @@ function search() {
             }}
     });
 }
-
 function open_song() {
     displayedKey = currentData.key % 12;
     actualKey = currentData.key % 12;
@@ -496,7 +502,6 @@ function open_song() {
 
     setWindow("chords");
 }
-
 async function back_to_list() {
     autoscrollvar = false;
     setWindow("list");
@@ -510,7 +515,6 @@ async function back_to_list() {
     const body = document.getElementById('sbody');
     if(body !== null) {body.remove();}
 }
-
 function open_editor() {
     var editor = document.getElementById('editScreen');
     editor.style.left = '0';
@@ -575,7 +579,6 @@ function open_editor() {
         dynamic_text(inp);
     })
 }
-
 function generate_editor_body() {
     let editor_stage = currentData.parts;
     editor_len = editor_stage.length;
@@ -617,7 +620,6 @@ function generate_editor_body() {
         movedown.addEventListener('click', () => nodeswitch(parseInt(movedown.dataset.id) + 1));
     });
 }
-
 function nodeswitch(id) {
     /* id = id of the new first el: nodeswitch(1) switches the 0 and the 1 el */
     //filter invalid cases
@@ -639,7 +641,6 @@ function nodeswitch(id) {
     newfirst.querySelector('.movedown').dataset.id = id-1;
     newfirst.querySelector('.movegone').dataset.id = id-1;
 }
-
 function add_epart() {
     const new_epart = document.createElement('div');
     const new_id = document.querySelectorAll(".epart").length;
@@ -671,7 +672,6 @@ function add_epart() {
     movedown.addEventListener('click', () => nodeswitch(parseInt(movedown.dataset.id) + 1));
     editor_len++;
 }
-
 function rem_epart(id) {
     for (const epart of document.querySelectorAll('.epart')) {
         if (parseInt(epart.dataset.id) < id) {
@@ -687,7 +687,6 @@ function rem_epart(id) {
         }
     }
 }
-
 function prepare_textarea(text) {
     let returnsting = ""
     let lines = text.split('\n');
@@ -696,7 +695,6 @@ function prepare_textarea(text) {
     }
     return returnsting;
 }
-
 async function save_song() {
     const etitle = document.querySelector('#etitle').value;
     if(!etitle) {alert("need title"); return}
@@ -782,7 +780,6 @@ async function save_song() {
     else {setWindow("chords"); grab(data.name);}
 
 }
-
 async function remove_song() {
     setLoading(true)
     let apiUrl = 'API/sql.php';
@@ -812,7 +809,6 @@ async function remove_song() {
     await back_to_list();
     setLoading(false);
 }
-
 function discard_song() {
     document.getElementById('editScreen').style.left = '100vw';
     if(current_window === "edit") {
@@ -821,7 +817,6 @@ function discard_song() {
         setWindow("list");
     }
 }
-
 function generate_body(parts, commentMatrix) {
     //console.log(content);
     const body = document.createElement('div');
@@ -1005,7 +1000,6 @@ function generate_body(parts, commentMatrix) {
 
     document.getElementById('scrollingchords').appendChild(body);
 }
-
 function partseperator(content, startv='{c: ', endv ='}') {
     /*content: the haystack | startv: opening Title Tag | endv: closing Title Tag //
     * returns an Array of all titles on even indices and content on odd ones //
@@ -1058,7 +1052,6 @@ function zoom() {
         update_VA_speed()
     }
 }
-
 function transpose(keyShift, capotune = false) {
     let oldKeys = keyDict[displayedKey][1];
     displayedKey = (displayedKey + keyShift) % 12;
@@ -1113,7 +1106,6 @@ function transpose(keyShift, capotune = false) {
         e.textContent = new_chord;
     });
 }
-
 async function flip_textmode() {
     document.getElementById('sauth').innerHTML = '';
     document.getElementById('stitle').innerHTML = '';
@@ -1126,7 +1118,6 @@ async function flip_textmode() {
 
     if(autoscrollvar) {await update_VA_speed();}
 }
-
 function flip_darkmode() {
     const palette = document.getElementById('palette');
         if(palette.href.replace("palette-light.css", "") !== palette.href) {
@@ -1135,7 +1126,6 @@ function flip_darkmode() {
             palette.href = "colors/palette-light.css";
         }
 }
-
 function set_palette(value) {
     const palette = document.getElementById('palette');
     if(palette.href.replace(value, "") === palette.href) {
@@ -1145,7 +1135,6 @@ function set_palette(value) {
     }
 
 }
-
 async function fullscreen() {
     if (full) {
         closeFullscreen();
@@ -1153,7 +1142,6 @@ async function fullscreen() {
         openFullscreen();
     }
 }
-
 function openFullscreen() {
     const elem = document.documentElement;
     if (elem.requestFullscreen) {
@@ -1164,7 +1152,6 @@ function openFullscreen() {
         elem.msRequestFullscreen();
     }
 }
-
 function closeFullscreen() {
     const elem = document/*.documentElement*/;
     if (elem.exitFullscreen) {
@@ -1175,7 +1162,6 @@ function closeFullscreen() {
         elem.msExitFullscreen();
     }
 }
-
 function autoscroll() {
     if(autoscrollvar) {
         autoscrollvar = false;
@@ -1184,7 +1170,6 @@ function autoscroll() {
         init_autoscroll(document.getElementById('chordScreen'), 5);
     }
 }
-
 function init_autoscroll() {
     const autoScrollDiv = document.getElementById('chordScreen');
     //console.log('scrollspeedauto', scrollspeed);
@@ -1201,7 +1186,6 @@ function init_autoscroll() {
         }
     }, scrollspeed);
 }
-
 function calc_AV_speed(autoScrollDiv = scrollSect) {
     let s = autoScrollDiv.scrollHeight - autoScrollDiv.clientHeight;
     let t = currentData.Duration;
@@ -1211,7 +1195,6 @@ function calc_AV_speed(autoScrollDiv = scrollSect) {
     }
     return Math.round((t * 1000) / s);
 }
-
 async function update_VA_speed() {
     AVThresholdStamp = Date.now()
     autoscrollvar = false;
